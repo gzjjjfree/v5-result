@@ -33,8 +33,8 @@ jobs:
           
           # 核心编译逻辑：-ldflags "-s -w" 减小体积
           # 编译路径必须指向 ./main
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} \
-          go build -v -ldflags "-s -w" -o build_assets/$NAME-${{ matrix.goos }}-${{ matrix.goarch }} ./main
+          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} \
+          go build -v -ldflags "-s -w" -tags "conf_json" -o build_assets/$NAME-${{ matrix.goos }}-${{ matrix.goarch }} ./main
 
       - name: Create or Update Release
         uses: softprops/action-gh-release@v1
