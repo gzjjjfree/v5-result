@@ -1,0 +1,52 @@
+name: V2Ray Custom Release
+
+on:
+  push:
+    branches: [ "v5-result" ] # 只要你往这个分支推代码，就会更新 Release
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # 必须赋予写入 Release 的权限
+    strategy:
+      matrix:
+        goos: [linux, windows, darwin]
+        goarch: [amd64, arm64]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.4'
+          cache: true
+
+      - name: Build V2Ray Core
+        run: |
+          mkdir -p build_assets
+          # 定义输出名称
+          NAME=v5-result
+          if [ "${{ matrix.goos }}" = "windows" ]; then NAME=v5-result.exe; fi
+          
+          # 核心编译逻辑：-ldflags "-s -w" 减小体积
+          # 编译路径必须指向 ./main
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} \
+          go build -v -ldflags "-s -w" -o build_assets/$NAME-${{ matrix.goos }}-${{ matrix.goarch }} ./main
+
+      - name: Create or Update Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: custom-build # 固定的 Tag 名字
+          name: "V2Ray 定制版 (CF 优选支持)"
+          body: |
+            这是基于 v5-result 分支自动生成的定制版 V2Ray。
+            已注入 cf-scanner 的 result.json 自动加载逻辑。
+            构建时间: ${{ github.event.head_commit.timestamp }}
+          draft: false
+          prerelease: false
+          files: build_assets/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
