@@ -45,6 +45,9 @@ jobs:
           body: |
             这是基于 v5-result 分支自动生成的定制版 V2Ray。
             已注入 cf-scanner 的 result.json 自动加载逻辑。
+            请把  result.json 放在  v5-result 同目录的 result 文件夹里
+            config.json 文件配置的出站 tag 只要包含 cdn 字符如 "cdnproxy"
+            此出站的 "address" 每次连接都会随机从  result.json 地址池选取
             构建时间: ${{ github.event.head_commit.timestamp }}
           draft: false
           prerelease: false

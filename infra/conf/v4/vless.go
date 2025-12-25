@@ -133,7 +133,6 @@ type VLessOutboundConfig struct {
 
 // Build implements Buildable
 func (c *VLessOutboundConfig) Build() (proto.Message, error) {
-	//fmt.Printf("in func (c *VLessOutboundConfig) Build c: %+v", c)
 	config := new(outbound.Config)
 
 	if len(c.Vnext) == 0 {

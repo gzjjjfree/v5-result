@@ -120,7 +120,6 @@ type InboundDetourConfig struct {
 
 // Build implements Buildable.
 func (c *InboundDetourConfig) Build() (*core.InboundHandlerConfig, error) {
-	//fmt.Println("in func (c *InboundDetourConfig) BueldV4")
 	receiverSettings := &proxyman.ReceiverConfig{}
 
 	if c.ListenOn == nil {
@@ -232,7 +231,6 @@ type OutboundDetourConfig struct {
 
 // Build implements Buildable.
 func (c *OutboundDetourConfig) Build() (*core.OutboundHandlerConfig, error) {
-	//fmt.Println("in func (c *OutboundDetourConfig) BueldV4")
 	senderSettings := &proxyman.SenderConfig{}
 
 	if c.SendThrough != nil {
@@ -282,92 +280,17 @@ func (c *OutboundDetourConfig) Build() (*core.OutboundHandlerConfig, error) {
 		return nil, newError("failed to parse to outbound detour config.").Base(err)
 	}
 
-	if strings.Contains(strings.ToLower(c.Tag), "cdn") {
-		switch c.Protocol {
-		case "vless":
-			if vless, ok := rawConfig.(*VLessOutboundConfig); ok {
-				d, err := Configloads()
-				if err == nil {
-					for i := 0; i < len(d); i++ {
-						v := VLessOutboundVnext{
-							Address: d[i].Addresses,
-							Port:    vless.Vnext[0].Port,
-							Users:   vless.Vnext[0].Users,
-						}
-						vless.Vnext = append(vless.Vnext, &v)
-					}
-				}
-			}
-		case "vmess":
-			if vmess, ok := rawConfig.(*VMessOutboundConfig); ok {
-				d, err := Configloads()
-				if err == nil {
-					for i := 0; i < len(d); i++ {
-						v := VMessOutboundTarget{
-							Address: d[i].Addresses,
-							Port:    vmess.Receivers[0].Port,
-							Users:   vmess.Receivers[0].Users,
-						}
-						vmess.Receivers = append(vmess.Receivers, &v)
-					}
-				}
-			}
-		}
-	}
-
 	ts, err := rawConfig.(cfgcommon.Buildable).Build()
 	if err != nil {
 		return nil, err
 	}
+	fmt.Printf("生成出站信息: \n%v\n", ts)
 
 	return &core.OutboundHandlerConfig{
 		SenderSettings: serial.ToTypedMessage(senderSettings),
 		Tag:            c.Tag,
 		ProxySettings:  serial.ToTypedMessage(ts),
 	}, nil
-}
-
-type vaddresses struct {
-	Addresses *cfgcommon.Address `json:"address"`
-}
-
-func Configloads() ([]vaddresses, error) {
-	dirPath := filepath.Join(".", "result")
-	var files []string
-	filepath.WalkDir(dirPath, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err // 如果遍历过程中出现错误，则返回错误
-		}
-		if !d.IsDir() && strings.Contains(d.Name(), "result") { // 检查是否为文件且文件名包含 "result"
-			files = append(files, path)
-		}
-		return nil
-	})
-
-	var addresses []vaddresses
-	for _, file := range files {
-		content, err := os.Open(file)
-		if err != nil {
-			fmt.Printf("Error reading file %s: %v\n", file, err)
-			continue // 继续处理下一个文件
-		}
-		defer content.Close()
-
-		var addr []vaddresses
-		decoder := json.NewDecoder(content)
-		err = decoder.Decode(&addr)
-		if err != nil {
-			fmt.Println("解析 result.json 文件出错: ", err)
-			return nil, err
-		}
-		addresses = append(addresses, addr...)
-	}
-	seed := time.Now().UnixNano()
-	r := rand.New(rand.NewSource(seed))
-	r.Shuffle(len(addresses), func(i, j int) {
-		addresses[i], addresses[j] = addresses[j], addresses[i]
-	})
-	return addresses, nil
 }
 
 type StatsConfig struct{}
@@ -643,6 +566,82 @@ func (c *Config) Build() (*core.Config, error) {
 			}
 			applyTransportConfig(rawOutboundConfig.StreamSetting, c.Transport)
 		}
+
+		// 出站 tag 以 "cdn-" 开头时，以 IP 池地址建立出站列表
+		if strings.HasPrefix(strings.ToLower(rawOutboundConfig.Tag), "cdn-") {
+			d, derr := Configloads()
+			if derr == nil && len(d) > 0 {
+				if len(d) > 50 {
+					d = d[:50]
+				}
+				// 保存原始 Tag 模板，防止累加导致的 Tag 错误
+				originalTag := rawOutboundConfig.Tag
+
+				for i := 0; i < len(d); i++ {
+					// 1. 重要：深拷贝配置，防止修改影响后续循环
+					// 假设配置对象支持 Clone 或通过重新赋值处理
+					tempConfig := rawOutboundConfig
+
+					// 2. 生成规范的唯一 Tag，例如 cdn-node-0, cdn-node-1
+					tempConfig.Tag = fmt.Sprintf("%snode-%d", originalTag, i)
+
+					// 3. 修改代理目的地 (关键部分)
+					// 判断协议类型并修改对应的 Address
+					settings := []byte("{}")
+					if tempConfig.Settings != nil {
+						settings = ([]byte)(*tempConfig.Settings)
+					}
+
+					// 我们直接操作 JSON Map，绕过结构体的 Marshal 限制
+					var settingsMap map[string]interface{}
+					json.Unmarshal(settings, &settingsMap)
+
+					switch tempConfig.Protocol {
+					case "vless":
+						// 如果是 VLess，修改第一个 vnext 的地址
+						if vnext, ok := settingsMap["vnext"].([]interface{}); ok && len(vnext) > 0 {
+							if firstVnext, ok := vnext[0].(map[string]interface{}); ok {
+								// 直接把 address 设为字符串，这是 V2Ray 解析器最喜欢的格式
+								firstVnext["address"] = d[i].Addresses.String()
+							}
+						}
+					case "vmess":
+						// 如果是 VMess，修改第一个 receiver 的地址
+						if vmess, ok := settingsMap["Receivers"].([]interface{}); ok && len(vmess) > 0 {
+							if firstvmess, ok := vmess[0].(map[string]interface{}); ok {
+								firstvmess["address"] = d[i].Addresses.String()
+							}
+						}
+					case "trojan":
+						// 如果是 Trojan 或 Shadowsocks 同字段 Servers
+						if trojan, ok := settingsMap["Servers"].([]interface{}); ok && len(trojan) > 0 {
+							if firsttrojan, ok := trojan[0].(map[string]interface{}); ok {
+								firsttrojan["Servers"] = d[i].Addresses.String()
+							}
+						}
+					default:
+						// 如果是其他协议，可以尝试通过反射或忽略
+						fmt.Printf("警告: 协议 %s 暂不支持动态注入优选 IP\n", tempConfig.Protocol)
+					}
+
+					// 4. 将修改后的 Map 封回 Settings
+					modifiedSettings, err := json.Marshal(settingsMap)
+					if err != nil {
+						return nil, err
+					}
+					tempConfig.Settings = (*json.RawMessage)(&modifiedSettings)
+
+					oc, err := tempConfig.Build()
+					if err != nil {
+						return nil, err
+					}
+					config.Outbound = append(config.Outbound, oc)
+				}
+				// 成功处理完优选列表后，跳过原本模板的构建（continue）
+				continue
+			}
+		}
+
 		oc, err := rawOutboundConfig.Build()
 		if err != nil {
 			return nil, err
@@ -651,4 +650,47 @@ func (c *Config) Build() (*core.Config, error) {
 	}
 
 	return config, nil
+}
+
+type vaddresses struct {
+	Addresses *cfgcommon.Address `json:"address"`
+}
+
+func Configloads() ([]vaddresses, error) {
+	dirPath := filepath.Join(".", "result")
+	var files []string
+	filepath.WalkDir(dirPath, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err // 如果遍历过程中出现错误，则返回错误
+		}
+		if !d.IsDir() && strings.Contains(d.Name(), "result") { // 检查是否为文件且文件名包含 "result"
+			files = append(files, path)
+		}
+		return nil
+	})
+
+	var addresses []vaddresses
+	for _, file := range files {
+		content, err := os.Open(file)
+		if err != nil {
+			fmt.Printf("Error reading file %s: %v\n", file, err)
+			continue // 继续处理下一个文件
+		}
+		defer content.Close()
+
+		var addr []vaddresses
+		decoder := json.NewDecoder(content)
+		err = decoder.Decode(&addr)
+		if err != nil {
+			fmt.Println("解析 result.json 文件出错: ", err)
+			return nil, err
+		}
+		addresses = append(addresses, addr...)
+	}
+	seed := time.Now().UnixNano()
+	r := rand.New(rand.NewSource(seed))
+	r.Shuffle(len(addresses), func(i, j int) {
+		addresses[i], addresses[j] = addresses[j], addresses[i]
+	})
+	return addresses, nil
 }
