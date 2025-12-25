@@ -3,6 +3,9 @@ name: V2Ray Custom Release
 on:
   push:
     branches: [ "v5-result" ] # 只要你往这个分支推代码，就会更新 Release
+    paths-ignore:
+      - '.github/workflows/*.yml'  # 忽略工作流文件自身的改动
+      - '**.md'                    # 忽略所有 Markdown 文件的改动
 
 jobs:
   build-and-release:
