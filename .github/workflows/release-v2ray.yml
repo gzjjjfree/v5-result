@@ -10,6 +10,7 @@ jobs:
     permissions:
       contents: write # 必须赋予写入 Release 的权限
     strategy:
+      fail-fast: false # 关键：即使一个平台失败，其他平台也继续编译，不要中断
       matrix:
         goos: [linux, windows, darwin]
         goarch: [amd64, arm64]
