@@ -32,4 +32,5 @@ errorgen
 .golangci.yml
 
 config.json
-*result*
+result*
+v5-result*
