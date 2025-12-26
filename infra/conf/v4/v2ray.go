@@ -284,7 +284,6 @@ func (c *OutboundDetourConfig) Build() (*core.OutboundHandlerConfig, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("生成出站信息: \n%v\n", ts)
 
 	return &core.OutboundHandlerConfig{
 		SenderSettings: serial.ToTypedMessage(senderSettings),
@@ -583,8 +582,7 @@ func (c *Config) Build() (*core.Config, error) {
 					tempConfig := rawOutboundConfig
 
 					// 2. 生成规范的唯一 Tag，例如 cdn-node-0, cdn-node-1
-					tempConfig.Tag = fmt.Sprintf("%snode-%d", originalTag, i)
-
+					tempConfig.Tag = fmt.Sprintf("%v-%d", originalTag, i)
 					// 3. 修改代理目的地 (关键部分)
 					// 判断协议类型并修改对应的 Address
 					settings := []byte("{}")

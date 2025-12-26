@@ -50,14 +50,14 @@ jobs:
             已注入 cf-scanner 的 result.json 自动加载逻辑。
             请把  result.json 放在  v5-result 同目录的 result 文件夹里
             config.json 文件配置的出站 tag 只要头部为 “cdn-” 如 "cdn-proxy"
-            则生成由 result.json 地址池 IP 组成的出站列表，tag 为 "cdn-node-序号"
+            则生成由 result.json 地址池 IP 组成的出站列表，tag 为 "cdn-proxy-序号"
             出站路由写
             "routing": {
                 "domainStrategy": "AsIs",  
                 "balancers": [
                     {
                         "tag": "cdn-balancer",
-                        "selector": ["cdn-node-"],
+                        "selector": ["cdn-"],
                         "strategy": {
                             "type": "random" 
                         }
