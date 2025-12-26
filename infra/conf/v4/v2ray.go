@@ -655,14 +655,34 @@ type vaddresses struct {
 }
 
 func Configloads() ([]vaddresses, error) {
-	dirPath := filepath.Join(".", "result")
+	// 1. 获取二进制文件所在的绝对路径，而不是依赖执行时的终端位置
+	exePath, err := os.Executable()
+	if err != nil {
+		return nil, err
+	}
+	baseDir := filepath.Dir(exePath)
+	dirPath := filepath.Join(baseDir, "result") // 这样无论在哪运行，都会找二进制旁边的 result 文件夹
+	fmt.Printf("dirPath: %v", dirPath)
 	var files []string
+
+	// 检查文件夹是否存在
+	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+		fmt.Printf("[ERROR] 文件夹不存在: %s\n", dirPath)
+		dirPath = filepath.Join(".", "result")
+		if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+			fmt.Printf("[ERROR] 文件夹不存在: %s\n", dirPath)
+			return nil, err
+		}
+		fmt.Printf("读取文件夹: %s\n", dirPath)
+	}
 	filepath.WalkDir(dirPath, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
+			fmt.Printf("WalkDir err: %v", err.Error())
 			return err // 如果遍历过程中出现错误，则返回错误
 		}
 		if !d.IsDir() && strings.Contains(d.Name(), "result") { // 检查是否为文件且文件名包含 "result"
 			files = append(files, path)
+			fmt.Printf("files: %v", files)
 		}
 		return nil
 	})
