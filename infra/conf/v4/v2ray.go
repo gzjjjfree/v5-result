@@ -662,7 +662,7 @@ func Configloads() ([]vaddresses, error) {
 	}
 	baseDir := filepath.Dir(exePath)
 	dirPath := filepath.Join(baseDir, "result") // 这样无论在哪运行，都会找二进制旁边的 result 文件夹
-	fmt.Printf("dirPath: %v", dirPath)
+	//fmt.Printf("dirPath: %v", dirPath)
 	var files []string
 
 	// 检查文件夹是否存在
