@@ -6,6 +6,7 @@ on:
     paths-ignore:
       - '.github/workflows/*.yml'  # 忽略工作流文件自身的改动
       - '**.md'                    # 忽略所有 Markdown 文件的改动
+  workflow_dispatch: # 👈 加入这一行，允许手动点击运行
 
 jobs:
   build-and-release:
