@@ -37,7 +37,7 @@ func TestV2RayDependency(t *testing.T) {
 	<-wait
 }
 
-func TestV2RayClose(t *testing.T) {
+func TestV2RayClose(t *testing.T) { // ok
 	port := tcp.PickPort()
 
 	userID := uuid.New()
