@@ -66,34 +66,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: custom-build # 固定的 Tag 名字
-          name: "V2Ray 定制版 (CF 优选支持)"
-          body: |
-            这是基于 v5-result 分支自动生成的定制版 V2Ray。
-            已注入 cf-scanner 的 result.json 自动加载逻辑。
-            请把  result.json 放在  v5-result 同目录的 result 文件夹里
-            config.json 文件配置的出站 tag 只要头部为 “cdn-” 如 "cdn-proxy"
-            则生成由 result.json 地址池 IP 组成的出站列表，tag 为 "cdn-proxy-序号"
-            出站路由写
-            "routing": {
-                "domainStrategy": "AsIs",  
-                "balancers": [
-                    {
-                        "tag": "cdn-balancer",
-                        "selector": ["cdn-"],
-                        "strategy": {
-                            "type": "random" 
-                        }
-                    }
-                ],
-                "rules": [
-                    {
-                        "type": "field",
-                        "balancerTag": "cdn-balancer",
-                        "inboundTag": "yourfrom"
-                    }
-                ]
-            }
-            构建时间: ${{ github.event.head_commit.timestamp }}
+          name: "V2Ray 定制版 (CF 优选支持)"          
           draft: false
           prerelease: false
           files: build_assets/*
