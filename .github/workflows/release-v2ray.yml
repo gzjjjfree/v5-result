@@ -54,12 +54,13 @@ jobs:
           mkdir -p build_assets
           # 定义输出名称
           NAME=v5-result
-          if [ "${{ matrix.goos }}" = "windows" ]; then NAME=v5-result.exe; fi
+          Suffix=""
+          if [ "${{ matrix.goos }}" = "windows" ]; then Suffix=.exe; fi
           
           # 核心编译逻辑：-ldflags "-s -w" 减小体积
           # 编译路径必须指向 ./main
           CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} \
-          go build -v -ldflags "-s -w" -tags "conf_json" -o build_assets/$NAME-${{ matrix.goos }}-${{ matrix.goarch }} ./main
+          go build -v -ldflags "-s -w" -tags "conf_json" -o build_assets/$NAME-${{ matrix.goos }}-${{ matrix.goarch }}build_assets/$Suffix ./main
 
       - name: Create or Update Release
         uses: softprops/action-gh-release@v1
