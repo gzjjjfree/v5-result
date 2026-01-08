@@ -5,6 +5,8 @@
   <p>Project V is a set of network tools that helps you to build your own computer network. It secures your network connections and thus protects your privacy.</p>
 </div>
 
+![Downloads](https://img.shields.io/github/downloads/gzjjjfree/v5-result/total?style=flat-square)
+
 [![GitHub Test Badge](https://github.com/v2fly/v2ray-core/actions/workflows/test.yml/badge.svg)](https://github.com/v2fly/v2ray-core/actions/workflows/test.yml)
 [![codecov.io](https://codecov.io/gh/v2fly/v2ray-core/branch/master/graph/badge.svg?branch=master)](https://codecov.io/gh/v2fly/v2ray-core?branch=master)
 [![goreportcard](https://goreportcard.com/badge/github.com/v2fly/v2ray-core/v5)](https://goreportcard.com/report/github.com/v2fly/v2ray-core/v5)
