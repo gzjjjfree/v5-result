@@ -577,13 +577,12 @@ func (c *Config) Build() (*core.Config, error) {
 				originalTag := rawOutboundConfig.Tag
 
 				for i := 0; i < len(d); i++ {
-					// 1. 重要：深拷贝配置，防止修改影响后续循环
-					// 假设配置对象支持 Clone 或通过重新赋值处理
+					// 拷贝配置，防止修改影响后续循环
 					tempConfig := rawOutboundConfig
 
-					// 2. 生成规范的唯一 Tag，例如 cdn-node-0, cdn-node-1
+					// 生成规范的唯一 Tag，例如 cdn-node-0, cdn-node-1
 					tempConfig.Tag = fmt.Sprintf("%v-%d", originalTag, i)
-					// 3. 修改代理目的地 (关键部分)
+					
 					// 判断协议类型并修改对应的 Address
 					settings := []byte("{}")
 					if tempConfig.Settings != nil {
@@ -591,29 +590,28 @@ func (c *Config) Build() (*core.Config, error) {
 					}
 
 					// 我们直接操作 JSON Map，绕过结构体的 Marshal 限制
-					var settingsMap map[string]interface{}
+					var settingsMap map[string]any
 					json.Unmarshal(settings, &settingsMap)
 
 					switch tempConfig.Protocol {
 					case "vless":
 						// 如果是 VLess，修改第一个 vnext 的地址
-						if vnext, ok := settingsMap["vnext"].([]interface{}); ok && len(vnext) > 0 {
-							if firstVnext, ok := vnext[0].(map[string]interface{}); ok {
-								// 直接把 address 设为字符串，这是 V2Ray 解析器最喜欢的格式
+						if vnext, ok := settingsMap["vnext"].([]any); ok && len(vnext) > 0 {
+							if firstVnext, ok := vnext[0].(map[string]any); ok {
 								firstVnext["address"] = d[i].Addresses.String()
 							}
 						}
 					case "vmess":
 						// 如果是 VMess，修改第一个 receiver 的地址
-						if vmess, ok := settingsMap["Receivers"].([]interface{}); ok && len(vmess) > 0 {
+						if vmess, ok := settingsMap["Receivers"].([]any); ok && len(vmess) > 0 {
 							if firstvmess, ok := vmess[0].(map[string]interface{}); ok {
 								firstvmess["address"] = d[i].Addresses.String()
 							}
 						}
 					case "trojan":
 						// 如果是 Trojan 或 Shadowsocks 同字段 Servers
-						if trojan, ok := settingsMap["Servers"].([]interface{}); ok && len(trojan) > 0 {
-							if firsttrojan, ok := trojan[0].(map[string]interface{}); ok {
+						if trojan, ok := settingsMap["Servers"].([]any); ok && len(trojan) > 0 {
+							if firsttrojan, ok := trojan[0].(map[string]any); ok {
 								firsttrojan["Servers"] = d[i].Addresses.String()
 							}
 						}
@@ -622,7 +620,7 @@ func (c *Config) Build() (*core.Config, error) {
 						fmt.Printf("警告: 协议 %s 暂不支持动态注入优选 IP\n", tempConfig.Protocol)
 					}
 
-					// 4. 将修改后的 Map 封回 Settings
+					// 将修改后的 Map 封回 Settings
 					modifiedSettings, err := json.Marshal(settingsMap)
 					if err != nil {
 						return nil, err
@@ -655,14 +653,14 @@ type vaddresses struct {
 }
 
 func Configloads() ([]vaddresses, error) {
-	// 1. 获取二进制文件所在的绝对路径，而不是依赖执行时的终端位置
+	// 获取二进制文件所在的绝对路径，而不是依赖执行时的终端位置
 	exePath, err := os.Executable()
 	if err != nil {
 		return nil, err
 	}
 	baseDir := filepath.Dir(exePath)
 	dirPath := filepath.Join(baseDir, "result") // 这样无论在哪运行，都会找二进制旁边的 result 文件夹
-	//fmt.Printf("dirPath: %v", dirPath)
+	
 	var files []string
 
 	// 检查文件夹是否存在
