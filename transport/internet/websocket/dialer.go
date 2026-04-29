@@ -4,9 +4,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"fmt"
 	"io"
 	gonet "net"
 	"net/http"
+	"strings"
+	sync "sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -17,7 +20,14 @@ import (
 	"github.com/v2fly/v2ray-core/v5/common/session"
 	"github.com/v2fly/v2ray-core/v5/features/extension"
 	"github.com/v2fly/v2ray-core/v5/transport/internet"
+
 	"github.com/v2fly/v2ray-core/v5/transport/internet/security"
+	"github.com/v2fly/v2ray-core/v5/transport/internet/tls"
+)
+
+var (
+	lastUpdateMu   sync.Mutex
+	lastUpdateTime time.Time
 )
 
 // Dial dials a WebSocket connection to the given destination.
@@ -26,6 +36,35 @@ func Dial(ctx context.Context, dest net.Destination, streamSettings *internet.Me
 
 	conn, err := dialWebsocket(ctx, dest, streamSettings)
 	if err != nil {
+		fmt.Println("failed to dial WebSocket: ", err)
+		errStr := err.Error()
+		if strings.Contains(errStr, "server rejected ECH") || strings.Contains(errStr, "EncryptedClientHelloConfigList") {
+
+			// --- 频率限制逻辑开始 ---
+			lastUpdateMu.Lock()
+			// 如果距离上次更新不足 5 分钟，则不再触发更新，避免频繁触发导致的资源浪费
+			if time.Since(lastUpdateTime) > 5*time.Minute {
+				lastUpdateTime = time.Now()
+				lastUpdateMu.Unlock()
+
+				fmt.Println("【自动修复】检测到 ECH 失效，向后台协程发送更新信号...")
+
+				// 非阻塞发送信号：如果后台正在处理，这个信号会被丢弃，避免堆积
+				select {
+				case tls.UpdateSignal <- struct{}{}:
+				default:
+					fmt.Println("【自动修复】更新通道已满，说明已有任务在排队")
+				}
+
+			} else {
+				lastUpdateMu.Unlock()
+				fmt.Println("【自动修复】短时间内已触发过更新，本次仅报错不触发")
+			}
+			// --- 频率限制逻辑结束 ---
+
+			// 2. 这里可以返回一个自定义错误，告诉上层稍后重试
+			return nil, newError("ECH_EXPIRED").Base(err)
+		}
 		return nil, newError("failed to dial WebSocket").Base(err)
 	}
 	return internet.Connection(conn), nil
@@ -56,7 +95,7 @@ func dialWebsocket(ctx context.Context, dest net.Destination, streamSettings *in
 
 	if securityEngine != nil {
 		protocol = "wss"
-
+		//fmt.Println("websocket dialer: security engine created, using wss protocol")
 		dialer.NetDialTLSContext = func(ctx context.Context, network, addr string) (gonet.Conn, error) {
 			conn, err := dialer.NetDial(network, addr)
 			if err != nil {

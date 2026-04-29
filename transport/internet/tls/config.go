@@ -287,6 +287,7 @@ func (c *Config) GetTLSConfig(opts ...Option) *tls.Config {
 		config.MaxVersion = tls.VersionTLS13
 	}
 
+	//if len(c.EchConfig) > 0 || len(c.Ech_DOHserver) > 0 {
 	if len(c.EchConfig) > 0 || len(c.Ech_DOHserver) > 0 {
 		err := ApplyECH(c, config) //nolint: staticcheck
 		if err != nil {            //nolint: staticcheck

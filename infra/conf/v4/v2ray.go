@@ -17,6 +17,7 @@ import (
 	"github.com/v2fly/v2ray-core/v5/app/dispatcher"
 	"github.com/v2fly/v2ray-core/v5/app/proxyman"
 	"github.com/v2fly/v2ray-core/v5/app/stats"
+	"github.com/v2fly/v2ray-core/v5/common/net"
 	"github.com/v2fly/v2ray-core/v5/common/serial"
 	"github.com/v2fly/v2ray-core/v5/features"
 	"github.com/v2fly/v2ray-core/v5/infra/conf/cfgcommon"
@@ -28,6 +29,7 @@ import (
 	"github.com/v2fly/v2ray-core/v5/infra/conf/synthetic/log"
 	"github.com/v2fly/v2ray-core/v5/infra/conf/synthetic/router"
 	"github.com/v2fly/v2ray-core/v5/infra/conf/v5cfg"
+	"github.com/v2fly/v2ray-core/v5/transport/internet/tls"
 )
 
 var (
@@ -564,6 +566,28 @@ func (c *Config) Build() (*core.Config, error) {
 				rawOutboundConfig.StreamSetting = &StreamConfig{}
 			}
 			applyTransportConfig(rawOutboundConfig.StreamSetting, c.Transport)
+		}		
+
+		// 逐级检查指针，防止出现 nil pointer dereference 导致崩溃
+		if rawOutboundConfig.StreamSetting != nil &&
+			rawOutboundConfig.StreamSetting.TLSSettings != nil {
+
+			// 检查是否非空且长度大于 0
+			if len(rawOutboundConfig.StreamSetting.TLSSettings.ECHDOHServer) > 0 &&
+				rawOutboundConfig.StreamSetting.TLSSettings.ServerName != "" {
+
+				fmt.Println("rawOutboundConfig.Tag:", rawOutboundConfig.Tag)
+				fmt.Println("[ECH] DOH 服务器配置:", string(rawOutboundConfig.StreamSetting.TLSSettings.ECHDOHServer))
+				fmt.Println("[ECH] ServerName 配置:", rawOutboundConfig.StreamSetting.TLSSettings.ServerName)
+
+				addr := net.ParseAddress(rawOutboundConfig.StreamSetting.TLSSettings.ServerName)
+				if addr.Family().IsDomain() {
+					fmt.Println("[ECH] ServerName 是域名，正在解析...")
+					go tls.GetECHConfigBackground(addr.String(), rawOutboundConfig.StreamSetting.TLSSettings.ECHDOHServer)
+				}
+			} else {
+				fmt.Println("[ECH] 配置不存在或为空字节数组")
+			}
 		}
 
 		// 出站 tag 以 "cdn-" 开头时，以 IP 池地址建立出站列表
@@ -582,7 +606,7 @@ func (c *Config) Build() (*core.Config, error) {
 
 					// 生成规范的唯一 Tag，例如 cdn-node-0, cdn-node-1
 					tempConfig.Tag = fmt.Sprintf("%v-%d", originalTag, i)
-					
+
 					// 判断协议类型并修改对应的 Address
 					settings := []byte("{}")
 					if tempConfig.Settings != nil {
@@ -660,7 +684,7 @@ func Configloads() ([]vaddresses, error) {
 	}
 	baseDir := filepath.Dir(exePath)
 	dirPath := filepath.Join(baseDir, "result") // 这样无论在哪运行，都会找二进制旁边的 result 文件夹
-	
+
 	var files []string
 
 	// 检查文件夹是否存在
@@ -680,7 +704,7 @@ func Configloads() ([]vaddresses, error) {
 		}
 		if !d.IsDir() && strings.Contains(d.Name(), "result") { // 检查是否为文件且文件名包含 "result"
 			files = append(files, path)
-			fmt.Printf("files: %v", files)
+			fmt.Printf("files: %v\n", files)
 		}
 		return nil
 	})

@@ -34,3 +34,4 @@ errorgen
 config.json
 result*
 v5-result*
+logmsg/

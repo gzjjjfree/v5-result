@@ -7,8 +7,11 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
+	"encoding/base64"
+	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -18,32 +21,152 @@ import (
 	"github.com/v2fly/v2ray-core/v5/transport/internet"
 )
 
-func ApplyECH(c *Config, config *tls.Config) error {
-	var ECHConfig []byte
-	var err error
-	var domain string
+var (
+	applyEchMutex sync.Mutex
+	UpdateSignal  = make(chan struct{}, 1)
+	// 全局最新的 ECH 配置缓存
+	globalEchCache []byte
+)
 
-	if len(c.EchConfig) > 0 {
-		ECHConfig = c.EchConfig
-	} else { // ECH config > DOH lookup
-		if c.EchQueryDomain == "" {
-			domain = config.ServerName
-		} else {
-			domain = c.EchQueryDomain
+// GetECHConfigBackground 后台监听函数
+// sig: 信号通道
+func GetECHConfigBackground(serverName string, workerDomain string) {
+	fmt.Println("[ECH] 后台同步协程已启动，等待信号...")
+
+	// 启动时先主动同步一次，确保初始状态是最新的
+	doUpdate(serverName, workerDomain)
+
+	for range UpdateSignal {
+		// 收到信号后执行更新
+		doUpdate(serverName, workerDomain)
+		fmt.Println("[ECH] 任务完成，继续等待下一个信号...")
+	}
+}
+
+// 执行更新操作
+func doUpdate(serverName string, workerDomain string) {
+	fmt.Println("[ECH] 收到更新信号，正在拉取最新配置...")
+	// 注意：这里的 workerDomain 是你分配给这个 Worker 的域名（必须是自定义域名）
+
+	// 定义备选 IP 列表
+	ips := []string{
+		"104.16.123.99:443",
+		"104.18.86.206:443",
+		"104.21.60.1:443",
+		"172.64.159.241:443",
+		"198.41.208.145:443",
+		"108.162.198.51:443",
+		"190.93.245.14:443",
+	}
+	targetDomain := serverName
+
+	// 构造完整的请求 URL
+	// curl.exe -v --resolve 自定义域名:443:104.16.123.99 "https://自定义域名/getech?domain=serverName"
+	finalUrl := fmt.Sprintf("https://%s/getech?domain=%s", workerDomain, targetDomain)
+
+	// 2. 开始轮询重试
+	var body []byte
+	var success bool
+
+	for _, cfIP := range ips {
+		fmt.Printf("[ECH] 尝试使用 IP: %s ...\n", cfIP)
+
+		transport := &http.Transport{
+			DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+				// 设置拨号超时，防止在单个 IP 上卡死太久
+				dialer := &net.Dialer{Timeout: 3 * time.Second}
+				return dialer.DialContext(ctx, network, cfIP)
+			},
+			TLSClientConfig: &tls.Config{
+				ServerName: workerDomain,
+				MinVersion: tls.VersionTLS13,
+			},
+			// 每次使用新 IP 都要禁用长连接重用，确保拨号发生
+			DisableKeepAlives: true,
 		}
-		addr := net.ParseAddress(domain)
-		if !addr.Family().IsDomain() {
-			return newError("Using DOH for ECH needs SNI")
-		}
-		ECHConfig, err = QueryRecord(addr.Domain(), c.Ech_DOHserver)
+
+		client := &http.Client{Transport: transport, Timeout: 5 * time.Second}
+
+		resp, err := client.Get(finalUrl)
 		if err != nil {
-			return err
+			fmt.Printf("[ECH] IP %s 连接失败: %v\n", cfIP, err)
+			continue // 尝试下一个 IP
+		}
+
+		if resp.StatusCode == http.StatusOK {
+			var readErr error
+			body, readErr = io.ReadAll(resp.Body)
+			resp.Body.Close()
+			if readErr == nil {
+				success = true
+				fmt.Printf("[ECH] IP %s 拉取成功！\n", cfIP)
+				break // 成功获取，跳出循环
+			}
+		} else {
+			fmt.Printf("[ECH] IP %s 返回状态码: %d\n", cfIP, resp.StatusCode)
+			resp.Body.Close()
 		}
 	}
 
-	config.EncryptedClientHelloConfigList = ECHConfig
+	if !success {
+		fmt.Println("[ECH] 所有备选 IP 均已尝试，拉取全部失败")
+		return
+	}
+
+	content := strings.TrimSpace(string(body))
+	if content == "" {
+		fmt.Println("[ECH] 获取内容为空")
+		return
+	}
+
+	ECHConfigBytes, err := base64.StdEncoding.DecodeString(content)
+	if err != nil {
+		fmt.Printf("[ECH] Base64 解码失败: %v, 内容: [%s]\n", err, content)
+		return
+	}
+
+	// 更新内存
+	applyEchMutex.Lock()
+	globalEchCache = ECHConfigBytes
+	applyEchMutex.Unlock()
+
+	fmt.Printf("[ECH] 内存配置已更新，长度: %d\n", len(ECHConfigBytes))
+}
+
+func ApplyECH(c *Config, config *tls.Config) error {
+	applyEchMutex.Lock()
+	config.EncryptedClientHelloConfigList = globalEchCache
+	applyEchMutex.Unlock()
 	return nil
 }
+
+//func ApplyECH(c *Config, config *tls.Config) error { //
+//	var ECHConfig []byte
+//	var err error
+//	var domain string
+//
+//	if len(c.EchConfig) > 0 {
+//		ECHConfig = c.EchConfig
+//	} else { // ECH config > DOH lookup
+//		if c.EchQueryDomain == "" {
+//			domain = config.ServerName
+//		} else {
+//			domain = c.EchQueryDomain
+//		}
+//		addr := net.ParseAddress(domain)
+//		if !addr.Family().IsDomain() {
+//			return newError("Using DOH for ECH needs SNI")
+//		}
+//		ECHConfig, err = QueryRecord(addr.Domain(), c.Ech_DOHserver)
+//		if err != nil {
+//			fmt.Println(err)
+//			return err
+//		}
+//	}
+//
+//	config.EncryptedClientHelloConfigList = ECHConfig
+//	return nil
+//}
 
 type record struct {
 	record []byte
