@@ -26,8 +26,9 @@ import (
 )
 
 var (
-	lastUpdateMu   sync.Mutex
-	lastUpdateTime time.Time
+	lastUpdateMu sync.Mutex
+	// key 为域名，value 为该域名上次更新的时间
+	lastUpdateMap = make(map[string]time.Time)
 )
 
 // Dial dials a WebSocket connection to the given destination.
@@ -38,20 +39,23 @@ func Dial(ctx context.Context, dest net.Destination, streamSettings *internet.Me
 	if err != nil {
 		fmt.Println("failed to dial WebSocket: ", err)
 		errStr := err.Error()
-		if strings.Contains(errStr, "server rejected ECH") || strings.Contains(errStr, "EncryptedClientHelloConfigList") {
+		if strings.Contains(errStr, "server rejected ECH") || strings.Contains(errStr, "EncryptedClientHelloConfigList") {		
+			// 获取当前连接的目标域名
+			targetDomain := dest.Address.String()
 
 			// --- 频率限制逻辑开始 ---
 			lastUpdateMu.Lock()
+			lastTime, exists := lastUpdateMap[targetDomain]
 			// 如果距离上次更新不足 5 分钟，则不再触发更新，避免频繁触发导致的资源浪费
-			if time.Since(lastUpdateTime) > 5*time.Minute {
-				lastUpdateTime = time.Now()
+			if !exists || time.Since(lastTime) > 5*time.Minute {
+				lastUpdateMap[targetDomain] = time.Now()
 				lastUpdateMu.Unlock()
 
 				fmt.Println("【自动修复】检测到 ECH 失效，向后台协程发送更新信号...")
 
 				// 非阻塞发送信号：如果后台正在处理，这个信号会被丢弃，避免堆积
 				select {
-				case tls.UpdateSignal <- struct{}{}:
+				case tls.UpdateSignal <- targetDomain:
 				default:
 					fmt.Println("【自动修复】更新通道已满，说明已有任务在排队")
 				}

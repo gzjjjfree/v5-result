@@ -23,9 +23,9 @@ import (
 
 var (
 	applyEchMutex sync.Mutex
-	UpdateSignal  = make(chan struct{}, 1)
-	// 全局最新的 ECH 配置缓存
-	globalEchCache []byte
+	UpdateSignal  = make(chan string, 1)
+	// Map：key 是 domain，value 是对应的 ECH 配置字节
+	globalEchCache = make(map[string][]byte)
 )
 
 // GetECHConfigBackground 后台监听函数
@@ -36,10 +36,11 @@ func GetECHConfigBackground(serverName string, workerDomain string) {
 	// 启动时先主动同步一次，确保初始状态是最新的
 	doUpdate(serverName, workerDomain)
 
-	for range UpdateSignal {
-		// 收到信号后执行更新
-		doUpdate(serverName, workerDomain)
-		fmt.Println("[ECH] 任务完成，继续等待下一个信号...")
+	// 监听信号，UpdateSignal 此时传递的是需要更新的 domain
+	for domain := range UpdateSignal {
+		// 如果信号传递的域名匹配或有通用更新逻辑
+		doUpdate(domain, workerDomain)
+		fmt.Printf("[ECH] 域名 %s 任务完成，继续等待...\n", domain)
 	}
 }
 
@@ -127,7 +128,8 @@ func doUpdate(serverName string, workerDomain string) {
 
 	// 更新内存
 	applyEchMutex.Lock()
-	globalEchCache = ECHConfigBytes
+	// 使用 serverName 作为 Key 存储
+	globalEchCache[serverName] = ECHConfigBytes
 	applyEchMutex.Unlock()
 
 	fmt.Printf("[ECH] 内存配置已更新，长度: %d\n", len(ECHConfigBytes))
@@ -135,7 +137,7 @@ func doUpdate(serverName string, workerDomain string) {
 
 func ApplyECH(c *Config, config *tls.Config) error {
 	applyEchMutex.Lock()
-	config.EncryptedClientHelloConfigList = globalEchCache
+	config.EncryptedClientHelloConfigList = globalEchCache[c.ServerName]
 	applyEchMutex.Unlock()
 	return nil
 }
