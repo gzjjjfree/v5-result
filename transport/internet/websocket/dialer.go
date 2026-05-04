@@ -39,15 +39,15 @@ func Dial(ctx context.Context, dest net.Destination, streamSettings *internet.Me
 	if err != nil {
 		fmt.Println("failed to dial WebSocket: ", err)
 		errStr := err.Error()
-		if strings.Contains(errStr, "server rejected ECH") || strings.Contains(errStr, "EncryptedClientHelloConfigList") {		
+		if strings.Contains(errStr, "server rejected ECH") || strings.Contains(errStr, "EncryptedClientHelloConfigList") {
 			// 获取当前连接的目标域名
 			targetDomain := dest.Address.String()
 
 			// --- 频率限制逻辑开始 ---
 			lastUpdateMu.Lock()
 			lastTime, exists := lastUpdateMap[targetDomain]
-			// 如果距离上次更新不足 5 分钟，则不再触发更新，避免频繁触发导致的资源浪费
-			if !exists || time.Since(lastTime) > 5*time.Minute {
+			// 如果距离上次更新不足 1 分钟，则不再触发更新，避免频繁触发导致的资源浪费
+			if !exists || time.Since(lastTime) > 1*time.Minute {
 				lastUpdateMap[targetDomain] = time.Now()
 				lastUpdateMu.Unlock()
 
@@ -87,7 +87,7 @@ func dialWebsocket(ctx context.Context, dest net.Destination, streamSettings *in
 		},
 		ReadBufferSize:   4 * 1024,
 		WriteBufferSize:  4 * 1024,
-		HandshakeTimeout: time.Second * 8,
+		HandshakeTimeout: time.Second * 20, // 这里就是设置 WS 握手超时的地方 * 30
 	}
 
 	protocol := "ws"
