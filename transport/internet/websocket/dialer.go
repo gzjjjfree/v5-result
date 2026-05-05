@@ -87,7 +87,7 @@ func dialWebsocket(ctx context.Context, dest net.Destination, streamSettings *in
 		},
 		ReadBufferSize:   4 * 1024,
 		WriteBufferSize:  4 * 1024,
-		HandshakeTimeout: time.Second * 20, // 这里就是设置 WS 握手超时的地方 * 30
+		HandshakeTimeout: time.Second * 15, // 这里就是设置 WS 握手超时的地方 * 30
 	}
 
 	protocol := "ws"

@@ -566,7 +566,15 @@ func (c *Config) Build() (*core.Config, error) {
 				rawOutboundConfig.StreamSetting = &StreamConfig{}
 			}
 			applyTransportConfig(rawOutboundConfig.StreamSetting, c.Transport)
-		}		
+		}
+
+		d, _ := Configloads()
+		addrStrings := make([]string, 0, len(d))
+		for _, v := range d {
+			if v.Addresses != nil {
+				addrStrings = append(addrStrings, v.Addresses.String())
+			}
+		}
 
 		// 逐级检查指针，防止出现 nil pointer dereference 导致崩溃
 		if rawOutboundConfig.StreamSetting != nil &&
@@ -583,7 +591,7 @@ func (c *Config) Build() (*core.Config, error) {
 				addr := net.ParseAddress(rawOutboundConfig.StreamSetting.TLSSettings.ServerName)
 				if addr.Family().IsDomain() {
 					fmt.Println("[ECH] ServerName 是域名，正在解析...")
-					go tls.GetECHConfigBackground(addr.String(), rawOutboundConfig.StreamSetting.TLSSettings.ECHDOHServer)
+					go tls.GetECHConfigBackground(addr.String(), rawOutboundConfig.StreamSetting.TLSSettings.ECHDOHServer, addrStrings)
 				}
 			} else {
 				fmt.Println("[ECH] 配置不存在或为空字节数组")
@@ -592,10 +600,10 @@ func (c *Config) Build() (*core.Config, error) {
 
 		// 出站 tag 以 "cdn-" 开头时，以 IP 池地址建立出站列表
 		if strings.HasPrefix(strings.ToLower(rawOutboundConfig.Tag), "cdn-") {
-			d, derr := Configloads()
-			if derr == nil && len(d) > 0 {
+
+			if len(d) > 0 {
 				if len(d) > 50 {
-					d = d[:50]
+					d = d[:500]
 				}
 				// 保存原始 Tag 模板，防止累加导致的 Tag 错误
 				originalTag := rawOutboundConfig.Tag

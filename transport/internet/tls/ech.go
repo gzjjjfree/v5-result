@@ -30,35 +30,39 @@ var (
 
 // GetECHConfigBackground 后台监听函数
 // sig: 信号通道
-func GetECHConfigBackground(serverName string, workerDomain string) {
+func GetECHConfigBackground(serverName string, workerDomain string, addresses []string) {
 	fmt.Println("[ECH] 后台同步协程已启动，等待信号...")
 
 	// 启动时先主动同步一次，确保初始状态是最新的
-	doUpdate(serverName, workerDomain)
+	doUpdate(serverName, workerDomain, addresses)
 
 	// 监听信号，UpdateSignal 此时传递的是需要更新的 domain
 	for domain := range UpdateSignal {
 		// 如果信号传递的域名匹配或有通用更新逻辑
-		doUpdate(domain, workerDomain)
+		doUpdate(domain, workerDomain, addresses)
 		fmt.Printf("[ECH] 域名 %s 任务完成，继续等待...\n", domain)
 	}
 }
 
 // 执行更新操作
-func doUpdate(serverName string, workerDomain string) {
+func doUpdate(serverName string, workerDomain string, addresses []string) {
 	fmt.Println("[ECH] 收到更新信号，正在拉取最新配置...")
 	// 注意：这里的 workerDomain 是你分配给这个 Worker 的域名（必须是自定义域名）
 
 	// 定义备选 IP 列表
 	ips := []string{
 		"104.16.123.99:443",
-		"104.18.86.206:443",
-		"104.21.60.1:443",
-		"172.64.159.241:443",
-		"198.41.208.145:443",
-		"108.162.198.51:443",
-		"190.93.245.14:443",
 	}
+
+	// 遍历并补全端口，然后追加到 ips 列表中
+	for _, addr := range addresses {
+		// 如果地址里没写端口，手动补上 :443
+		if !strings.Contains(addr, ":") {
+			addr = addr + ":443"
+		}
+		ips = append(ips, addr)
+	}
+
 	targetDomain := serverName
 
 	// 构造完整的请求 URL
