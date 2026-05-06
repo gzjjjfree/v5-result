@@ -602,8 +602,8 @@ func (c *Config) Build() (*core.Config, error) {
 		if strings.HasPrefix(strings.ToLower(rawOutboundConfig.Tag), "cdn-") {
 
 			if len(d) > 0 {
-				if len(d) > 50 {
-					d = d[:500]
+				if len(d) > 500 {
+					d = d[:499]
 				}
 				// 保存原始 Tag 模板，防止累加导致的 Tag 错误
 				originalTag := rawOutboundConfig.Tag

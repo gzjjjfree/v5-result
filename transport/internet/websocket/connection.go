@@ -32,11 +32,40 @@ type DelayedDialer interface {
 }
 
 func newConnection(conn *websocket.Conn, remoteAddr net.Addr) *connection {
-	return &connection{
+	c := &connection{
 		conn:       conn,
 		remoteAddr: remoteAddr,
 	}
+
+	// 启动心跳守护协程
+	// go c.keepAliveDaemon()
+
+	return c
 }
+
+// keepAliveDaemon 维持 WebSocket 心跳
+//func (c *connection) keepAliveDaemon() {
+//	// Cloudflare 默认超时一般在 100 秒左右，设置 30-45 秒的心跳最稳妥
+//	ticker := time.NewTicker(30 * time.Second)
+//	defer ticker.Stop()
+//
+//	for {
+//		select {
+//		case <-ticker.C:
+//			// 设置写入控制帧的超时时间，防止阻塞
+//			deadline := time.Now().Add(5 * time.Second)
+//
+//			// 发送标准 WebSocket Ping 帧 (Opcode 0x9)
+//			// 注意：不需要包含 payload，空字节即可
+//			err := c.conn.WriteControl(websocket.PingMessage, []byte{}, deadline)
+//			if err != nil {
+//				// 发送失败通常意味着连接底层已经断开 (例如 i/o timeout)
+//				// 此时可以直接退出协程，等待 V2Ray 的上层逻辑触发重连
+//				return
+//			}
+//		}
+//	}
+//}
 
 func newConnectionWithEarlyData(conn *websocket.Conn, remoteAddr net.Addr, earlyData io.Reader) *connection {
 	return &connection{
