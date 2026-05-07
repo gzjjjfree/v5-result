@@ -22,8 +22,13 @@ import (
 )
 
 var (
+	// 保护 statusMap 的并发安全
+	statusMutex   sync.Mutex
 	applyEchMutex sync.Mutex
-	UpdateSignal  = make(chan string, 1)
+	// 存储每个域名的状态：如果正在更新，对应 chan 会有数据或被关闭
+	updatingState = make(map[string]chan struct{})
+
+	UpdateSignal = make(chan string, 1)
 	// Map：key 是 domain，value 是对应的 ECH 配置字节
 	globalEchCache = make(map[string][]byte)
 )
@@ -32,20 +37,45 @@ var (
 // sig: 信号通道
 func GetECHConfigBackground(serverName string, workerDomain string, addresses []string) {
 	fmt.Println("[ECH] 后台同步协程已启动，等待信号...")
-
+	
 	// 启动时先主动同步一次，确保初始状态是最新的
-	doUpdate(serverName, workerDomain, addresses)
+	//doUpdate(ctx, serverName, workerDomain, addresses)
+
+	// 封装一个带锁的更新函数
+	safeUpdate := func(target string) {
+		// 为每次更新创建独立的 10 秒超时上下文
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		statusMutex.Lock()
+		ch := make(chan struct{})
+		updatingState[target] = ch
+		statusMutex.Unlock()
+
+		// 使用 defer 确保无论 doUpdate 是否报错，都会解除阻塞
+		defer func() {
+			statusMutex.Lock()
+			delete(updatingState, target)
+			close(ch)
+			statusMutex.Unlock()
+		}()
+
+		doUpdate(ctx, target, workerDomain, addresses)
+	}
+
+	// 启动初始同步
+	safeUpdate(serverName)
 
 	// 监听信号，UpdateSignal 此时传递的是需要更新的 domain
 	for domain := range UpdateSignal {
 		// 如果信号传递的域名匹配或有通用更新逻辑
-		doUpdate(domain, workerDomain, addresses)
+		safeUpdate(domain)
 		fmt.Printf("[ECH] 域名 %s 任务完成，继续等待...\n", domain)
 	}
 }
 
 // 执行更新操作
-func doUpdate(serverName string, workerDomain string, addresses []string) {
+func doUpdate(ctx context.Context, serverName string, workerDomain string, addresses []string) {
 	fmt.Println("[ECH] 收到更新信号，正在拉取最新配置...")
 	// 注意：这里的 workerDomain 是你分配给这个 Worker 的域名（必须是自定义域名）
 
@@ -74,10 +104,10 @@ func doUpdate(serverName string, workerDomain string, addresses []string) {
 	var success bool
 
 	for _, cfIP := range ips {
-		fmt.Printf("[ECH] 尝试使用 IP: %s ...\n", cfIP)
+		fmt.Printf("[ECH] 尝试使用 IP: %s ...拉取域名: %s\n", cfIP, targetDomain)
 
 		transport := &http.Transport{
-			DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+			DialContext: func(dialCtx context.Context, network, addr string) (net.Conn, error) {
 				// 设置拨号超时，防止在单个 IP 上卡死太久
 				dialer := &net.Dialer{Timeout: 3 * time.Second}
 				return dialer.DialContext(ctx, network, cfIP)
@@ -94,7 +124,7 @@ func doUpdate(serverName string, workerDomain string, addresses []string) {
 
 		resp, err := client.Get(finalUrl)
 		if err != nil {
-			fmt.Printf("[ECH] IP %s 连接失败: %v\n", cfIP, err)
+			fmt.Printf("[ECH] IP %s 拉取域名: %s 连接失败: %v\n", cfIP, targetDomain, err)
 			continue // 尝试下一个 IP
 		}
 
@@ -104,23 +134,23 @@ func doUpdate(serverName string, workerDomain string, addresses []string) {
 			resp.Body.Close()
 			if readErr == nil {
 				success = true
-				fmt.Printf("[ECH] IP %s 拉取成功！\n", cfIP)
+				fmt.Printf("[ECH] IP %s 拉取成功！拉取域名: %s\n", cfIP, targetDomain)
 				break // 成功获取，跳出循环
 			}
 		} else {
-			fmt.Printf("[ECH] IP %s 返回状态码: %d\n", cfIP, resp.StatusCode)
+			fmt.Printf("[ECH] IP %s 拉取域名: %s 返回状态码: %d\n", cfIP, targetDomain, resp.StatusCode)
 			resp.Body.Close()
 		}
 	}
 
 	if !success {
-		fmt.Println("[ECH] 所有备选 IP 均已尝试，拉取全部失败")
+		fmt.Printf("[ECH] 所有备选 IP 均已尝试，拉取全部失败拉取域名: %s\n", targetDomain)
 		return
 	}
 
 	content := strings.TrimSpace(string(body))
 	if content == "" {
-		fmt.Println("[ECH] 获取内容为空")
+		fmt.Printf("[ECH] 获取内容为空拉取域名: %s\n", targetDomain)
 		return
 	}
 
@@ -136,13 +166,26 @@ func doUpdate(serverName string, workerDomain string, addresses []string) {
 	globalEchCache[serverName] = ECHConfigBytes
 	applyEchMutex.Unlock()
 
-	fmt.Printf("[ECH] 内存配置已更新，长度: %d\n", len(ECHConfigBytes))
+	fmt.Printf("[ECH] 内存配置已更新，长度: %d 拉取域名: %s\n", len(ECHConfigBytes), serverName)
 }
 
 func ApplyECH(c *Config, config *tls.Config) error {
+	// 检查该域名是否正在更新
+	statusMutex.Lock()
+	waitCh, isUpdating := updatingState[c.ServerName]
+	statusMutex.Unlock()
+
+	if isUpdating {
+		fmt.Printf("[ECH] 域名 %s 正在更新，请求进入阻塞等待...\n", c.ServerName)
+		<-waitCh // 阻塞在这里，直到 doUpdate 完成并 close(ch)
+	}
+
+	// 此时更新已完成，安全读取数据
+	// 注意：这里的读取最好也加一下你原来的全局轻量锁，或者确保 map 写入后不再修改
 	applyEchMutex.Lock()
 	config.EncryptedClientHelloConfigList = globalEchCache[c.ServerName]
 	applyEchMutex.Unlock()
+
 	return nil
 }
 
