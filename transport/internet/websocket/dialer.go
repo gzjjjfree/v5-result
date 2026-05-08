@@ -41,30 +41,45 @@ func Dial(ctx context.Context, dest net.Destination, streamSettings *internet.Me
 		errStr := err.Error()
 		if strings.Contains(errStr, "server rejected ECH") {
 			// 获取当前连接的目标域名
-			targetDomain := dest.Address.String()
-
-			// --- 频率限制逻辑开始 ---
-			lastUpdateMu.Lock()
-			lastTime, exists := lastUpdateMap[targetDomain]
-			// 如果距离上次更新不足 1 分钟，则不再触发更新，避免频繁触发导致的资源浪费
-			if !exists || time.Since(lastTime) > 1*time.Minute {
-				lastUpdateMap[targetDomain] = time.Now()
-				lastUpdateMu.Unlock()
-
-				fmt.Println("【自动修复】检测到 ECH 失效，向后台协程发送更新信号...")
-
-				// 非阻塞发送信号：如果后台正在处理，这个信号会被丢弃，避免堆积
-				select {
-				case tls.UpdateSignal <- targetDomain:
-				default:
-					fmt.Println("【自动修复】更新通道已满，说明已有任务在排队")
+			if wsConfig, ok := streamSettings.ProtocolSettings.(*Config); ok {
+				var targetDomain string
+				// 遍历 Header 找到 Host
+				for _, header := range wsConfig.Header {
+					if strings.ToLower(header.Key) == "host" {
+						targetDomain = header.Value
+						fmt.Println("获取到的 Host:", targetDomain)
+						break
+					}
 				}
+				if targetDomain != "" {
+					// --- 频率限制逻辑开始 ---
+					lastUpdateMu.Lock()
+					lastTime, exists := lastUpdateMap[targetDomain]
+					// 如果距离上次更新不足 1 分钟，则不再触发更新，避免频繁触发导致的资源浪费
+					if !exists || time.Since(lastTime) > 1*time.Minute {
+						lastUpdateMap[targetDomain] = time.Now()
+						lastUpdateMu.Unlock()
 
+						fmt.Println("【自动修复】检测到 ECH 失效，向后台协程发送更新信号...")
+
+						// 非阻塞发送信号：如果后台正在处理，这个信号会被丢弃，避免堆积
+						select {
+						case tls.UpdateSignal <- targetDomain:
+						default:
+							fmt.Println("【自动修复】更新通道已满，说明已有任务在排队")
+						}
+
+					} else {
+						lastUpdateMu.Unlock()
+						fmt.Println("【自动修复】短时间内已触发过更新，本次仅报错不触发")
+					}
+					// --- 频率限制逻辑结束 ---
+				} else {
+					fmt.Println("无法从 WebSocket Header 中获取 Host, 无法确定目标域名")
+				}
 			} else {
-				lastUpdateMu.Unlock()
-				fmt.Println("【自动修复】短时间内已触发过更新，本次仅报错不触发")
+				fmt.Println("无法从 StreamSettings 中获取 WebSocket 配置，无法确定目标域名")
 			}
-			// --- 频率限制逻辑结束 ---
 
 			// 2. 这里可以返回一个自定义错误，告诉上层稍后重试
 			return nil, newError("failed to dial WebSocket").Base(err)
