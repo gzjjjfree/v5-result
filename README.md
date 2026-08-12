@@ -18,9 +18,9 @@
 1.  **自动 IP 池加载**：自动读取同级目录 `result/result.json` 中的 IP 地址。
 2.  **动态出站生成**：只要出站 `tag` 以 `cdn-` 开头（如 `cdn-vless`），程序会自动克隆该配置，并为 IP 池中的每个 IP 生成独立的出站节点（如 `cdn-vless-0`, `cdn-vless-1` 等）。
 3.  **ECH 自动化热更新**：
-    * 通过优选 IP 列表轮询访问自定义 Workers。
-    * 自动获取并更新内存中的 ECH 配置，无需重启。
-    * 支持 `ServerName` 级别的 ECH 匹配。
+    - 通过优选 IP 列表轮询访问自定义 Workers。
+    - 自动获取并更新内存中的 ECH 配置，无需重启。
+    - 支持 `ServerName` 级别的 ECH 匹配。
 
 ---
 
@@ -41,33 +41,35 @@
 ## 配置文件指南
 
 ### 1. 准备 IP 池 (`result/result.json`)
+
 请将优选工具扫描出的结果按以下格式存入：
 
 ```json
 [
-    {
-        "address": "104.16.244.51"
-    },
-    {
-        "address": "104.19.46.94"
-    }
+  {
+    "address": "104.16.244.51"
+  },
+  {
+    "address": "104.19.46.94"
+  }
 ]
 ```
 
 ### 2. 配置主文件 (`config.json`)
 
 #### 出站配置 (Outbounds)
+
 只需配置一个模板，`tag` 必须以 `cdn-` 为前缀。
 
 ```json
 "outbounds": [
     {
-        "protocol": "vless", 
+        "protocol": "vless",
         "tag": "cdn-vless",
-        "settings": { 
+        "settings": {
             "vnext": [
                 {
-                    "port": 443, 
+                    "port": 443,
                     "users": [
                         {
                             "id": "你的UUID",
@@ -77,12 +79,12 @@
                 }
             ]
         },
-        "streamSettings": { 
+        "streamSettings": {
             "network": "ws",
-            "security": "tls", 
+            "security": "tls",
             "tlsSettings": {
                 "serverName": "cf 代理你的网站名",
-                "echDohServer": "cf 请求 ECH 的 worker 的自定义域名，不要带 https://", 
+                "echDohServer": "cf 请求 ECH 的 worker 的自定义域名，不要带 https://",
                 "allowInsecure": false
             },
             "wsSettings": {
@@ -112,7 +114,7 @@ export default {
           headers: { "accept": "application/dns-json" }
         });
         const json = await response.json();
-        
+
         const echConfig = extractEch(json);
         if (echConfig) {
           return new Response(echConfig, { headers: { "Content-Type": "text/plain" } });
@@ -133,27 +135,21 @@ function extractEch(dnsJson) {
     if (record.type === 65) {
       const data = record.data;
 
-      // 情况 A: 已经是易读格式 ech="xxx"
-      const match = data.match(/ech="([^"]+)"/);
+      // 【修复点】：兼容 ech="xxx" 和 ech=xxx (不带引号，遇到空格结束)
+      const match = data.match(/ech="?([^"\s]+)"?/);
       if (match) return match[1];
 
-      // 情况 B: 十六进制格式 \# <len> <hex_data>
+      // 情况 B: 保留十六进制格式兼容，以防某些 DNS 服务器尚未更新格式
       if (data.startsWith("\\#")) {
-        // 移除前缀 "\# 136 "（具体的长度数字可能不同）
         const parts = data.split(' ');
-        // 真正的十六进制数据从索引 2 或 3 开始，我们将所有部分合并
         const hex = parts.slice(2).join('');
-        
-        // ECH 的标识符是 0005
+
         const echIndex = hex.indexOf("0005");
         if (echIndex !== -1) {
-          // 0005 后面是 2 字节长度 (4个字符)
           const lenHex = hex.substring(echIndex + 4, echIndex + 8);
           const len = parseInt(lenHex, 16);
-          // 提取 ECH 核心数据
           const echHex = hex.substring(echIndex + 8, echIndex + 8 + (len * 2));
-          
-          // 将 Hex 转换为 Uint8Array，再转为 Base64
+
           const bytes = new Uint8Array(echHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
           return btoa(String.fromCharCode(...bytes));
         }
@@ -165,17 +161,18 @@ function extractEch(dnsJson) {
 ```
 
 #### 路由与负载均衡 (Routing)
+
 使用 `balancer` 自动匹配所有动态生成的 `cdn-` 节点。
 
 ```json
 "routing": {
-    "domainStrategy": "AsIs",  
+    "domainStrategy": "AsIs",
     "balancers": [
         {
             "tag": "cdn-balancer",
             "selector": ["cdn-"],
             "strategy": {
-                "type": "random" 
+                "type": "random"
             }
         }
     ],
@@ -194,6 +191,7 @@ function extractEch(dnsJson) {
 ## ECH 更新逻辑说明
 
 本版本程序在运行时会启动一个后台任务：
+
 1.  **轮询机制**：程序会从内置的 Cloudflare 优选 IP 库中轮询，通过 HTTPS 请求 `tlsSettings` 中配置的 `echDohServer`。
 2.  **参数透传**：请求时会带上 `domain=ServerName` 参数，确保获取到正确的 ECH 密钥。
 3.  **自动应用**：拉取成功后，程序会自动更新全局内存缓存，后续所有经过负载均衡器的 TLS 连接都将使用最新的 ECH 密钥。
@@ -202,8 +200,8 @@ function extractEch(dnsJson) {
 
 ## 常见问题排查
 
-* **没有生成子出站？**：检查 `tag` 是否严格以 `cdn-` 开头，且 `result/result.json` 路径是否正确。
-* **ECH 更新失败？**：请确认 `echDohServer` 填入的是已经在 Cloudflare 绑定了 **自定义域名** 的 Worker 地址，且**不要**带 `https://` 协议头。
-* **连接重置 (RST)？**：如果由于 SNI 拦截导致无法更新，程序会自动尝试不同的优选 IP 绕过。
+- **没有生成子出站？**：检查 `tag` 是否严格以 `cdn-` 开头，且 `result/result.json` 路径是否正确。
+- **ECH 更新失败？**：请确认 `echDohServer` 填入的是已经在 Cloudflare 绑定了 **自定义域名** 的 Worker 地址，且**不要**带 `https://` 协议头。
+- **连接重置 (RST)？**：如果由于 SNI 拦截导致无法更新，程序会自动尝试不同的优选 IP 绕过。
 
 ---

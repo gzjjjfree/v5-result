@@ -153,7 +153,7 @@ func doUpdate(ctx context.Context, serverName string, workerDomain string, addre
 		fmt.Printf("[ECH] 获取内容为空拉取域名: %s\n", targetDomain)
 		return
 	}
-
+	
 	ECHConfigBytes, err := base64.StdEncoding.DecodeString(content)
 	if err != nil {
 		fmt.Printf("[ECH] Base64 解码失败: %v, 内容: [%s]\n", err, content)
