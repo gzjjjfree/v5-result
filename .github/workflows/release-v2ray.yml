@@ -2,10 +2,10 @@ name: V2Ray Custom Release
 
 on:
   push:
-    branches: [ "v5-result" ] # 只要你往这个分支推代码，就会更新 Release
+    branches: ["v5-result"] # 只要你往这个分支推代码，就会更新 Release
     paths-ignore:
       #- '.github/workflows/*.yml'  # 忽略工作流文件自身的改动
-      - '**.md'                    # 忽略所有 Markdown 文件的改动
+      - "**.md" # 忽略所有 Markdown 文件的改动
   workflow_dispatch: # 👈 加入这一行，允许手动点击运行
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
           - goos: windows
             goarch: amd64
           - goos: windows
-            goarch: arm64  # 适用于 Surface Pro X 等
+            goarch: arm64 # 适用于 Surface Pro X 等
 
           # --- Linux (服务器) ---
           - goos: linux
@@ -31,13 +31,15 @@ jobs:
 
           # --- Android (手机终端) ---
           - goos: android
-            goarch: arm64  # 这是你最需要的，用于 data/local/tmp 运行
+            goarch: arm64 # 这是你最需要的，用于 data/local/tmp 运行
+          - goos: android
+            goarch: x86_64 # 模拟器使用（强烈建议加上）
 
           # --- macOS ---
           - goos: darwin
             goarch: amd64
           - goos: darwin
-            goarch: arm64  # M1/M2/M3 芯片
+            goarch: arm64 # M1/M2/M3 芯片
 
     steps:
       - name: Checkout Code
@@ -46,27 +48,33 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24.4'
+          go-version: "1.24.4"
           cache: true
 
       - name: Build V2Ray Core
         run: |
           mkdir -p build_assets
-          # 定义输出名称
           NAME=v5-result
           SUFFIX=""
           if [ "${{ matrix.goos }}" = "windows" ]; then SUFFIX=".exe"; fi
-          
-          # 核心编译逻辑：-ldflags "-s -w" 减小体积
-          # 编译路径必须指向 ./main
+
+          # 默认的编译参数
+          LDFLAGS="-s -w"
+
+          # 如果目标是 Android，强制指定动态链接器
+          if [ "${{ matrix.goos }}" = "android" ]; then
+            LDFLAGS="-s -w -extldflags '-Wl,-rpath=/system/lib64 -Wl,-dynamic-linker,/system/bin/linker64'"
+          fi
+
+          # 执行编译
           CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} \
-          go build -v -ldflags "-s -w" -tags "conf_json" -o build_assets/$NAME-${{ matrix.goos }}-${{ matrix.goarch }}$SUFFIX ./main
+          go build -v -ldflags "$LDFLAGS" -tags "conf_json" -o build_assets/$NAME-${{ matrix.goos }}-${{ matrix.goarch }}$SUFFIX ./main
 
       - name: Create or Update Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: custom-build # 固定的 Tag 名字
-          name: "V2Ray 定制版 (CF 优选支持)"          
+          name: "V2Ray 定制版 (CF 优选支持)"
           draft: false
           prerelease: false
           files: build_assets/*
