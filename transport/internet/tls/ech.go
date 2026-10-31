@@ -26,9 +26,10 @@ var (
 	statusMutex   sync.Mutex
 	applyEchMutex sync.Mutex
 	// 存储每个域名的状态：如果正在更新，对应 chan 会有数据或被关闭
-	updatingState = make(map[string]chan struct{})
+	updatingState   = make(map[string]chan struct{})
+	lastUpdateTimes = make(map[string]time.Time)
 
-	UpdateSignal = make(chan string, 1)
+	UpdateSignal = make(chan string, 10)
 	// Map：key 是 domain，value 是对应的 ECH 配置字节
 	globalEchCache = make(map[string][]byte)
 )
@@ -37,19 +38,30 @@ var (
 // sig: 信号通道
 func GetECHConfigBackground(serverName string, workerDomain string, addresses []string) {
 	fmt.Println("[ECH] 后台同步协程已启动，等待信号...")
-	
+
 	// 启动时先主动同步一次，确保初始状态是最新的
 	//doUpdate(ctx, serverName, workerDomain, addresses)
 
-	// 封装一个带锁的更新函数
+	// 封装一个带锁的更新函数（带冷却防抖机制）
 	safeUpdate := func(target string) {
+		statusMutex.Lock()
+		if _, ok := updatingState[target]; ok {
+			statusMutex.Unlock()
+			return
+		}
+		// 15秒冷却防抖机制
+		if lastTime, ok := lastUpdateTimes[target]; ok && time.Since(lastTime) < 15*time.Second {
+			statusMutex.Unlock()
+			return
+		}
+
 		// 为每次更新创建独立的 10 秒超时上下文
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
-		statusMutex.Lock()
 		ch := make(chan struct{})
 		updatingState[target] = ch
+		lastUpdateTimes[target] = time.Now()
 		statusMutex.Unlock()
 
 		// 使用 defer 确保无论 doUpdate 是否报错，都会解除阻塞
@@ -153,7 +165,7 @@ func doUpdate(ctx context.Context, serverName string, workerDomain string, addre
 		fmt.Printf("[ECH] 获取内容为空拉取域名: %s\n", targetDomain)
 		return
 	}
-	
+
 	ECHConfigBytes, err := base64.StdEncoding.DecodeString(content)
 	if err != nil {
 		fmt.Printf("[ECH] Base64 解码失败: %v, 内容: [%s]\n", err, content)
@@ -170,22 +182,27 @@ func doUpdate(ctx context.Context, serverName string, workerDomain string, addre
 }
 
 func ApplyECH(c *Config, config *tls.Config) error {
-	// 检查该域名是否正在更新
-	statusMutex.Lock()
-	waitCh, isUpdating := updatingState[c.ServerName]
-	statusMutex.Unlock()
-
-	if isUpdating {
-		fmt.Printf("[ECH] 域名 %s 正在更新，请求进入阻塞等待...\n", c.ServerName)
-		<-waitCh // 阻塞在这里，直到 doUpdate 完成并 close(ch)
-	}
-
-	// 此时更新已完成，安全读取数据
-	// 注意：这里的读取最好也加一下你原来的全局轻量锁，或者确保 map 写入后不再修改
 	applyEchMutex.Lock()
-	config.EncryptedClientHelloConfigList = globalEchCache[c.ServerName]
+	echConfig := globalEchCache[c.ServerName]
 	applyEchMutex.Unlock()
 
+	if len(echConfig) == 0 {
+		// 无缓存：触发一次异步更新信号（非阻塞、带冷却防抖），并直接报错断开连接
+		statusMutex.Lock()
+		if _, updating := updatingState[c.ServerName]; !updating {
+			if lastTime, ok := lastUpdateTimes[c.ServerName]; !ok || time.Since(lastTime) > 15*time.Second {
+				select {
+				case UpdateSignal <- c.ServerName:
+				default:
+				}
+			}
+		}
+		statusMutex.Unlock()
+
+		return newError("ECH config not available for domain: ", c.ServerName, ", disconnecting connection")
+	}
+
+	config.EncryptedClientHelloConfigList = echConfig
 	return nil
 }
 

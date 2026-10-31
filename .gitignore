@@ -32,6 +32,7 @@ errorgen
 [._]*.un~
 
 .golangci.yml
+ARCH_NOTES.md
 
 config.json
 result*
