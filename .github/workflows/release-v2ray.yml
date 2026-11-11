@@ -60,19 +60,9 @@ jobs:
           SUFFIX=""
           if [ "${{ matrix.goos }}" = "windows" ]; then SUFFIX=".exe"; fi
 
-          # 默认编译参数（其他所有平台包括 android/arm64 均使用此配置）
-          LDFLAGS="-s -w"
-          CGO_VAL=0
-
-          # 只有 android 且架构是 amd64 时，才启用 CGO 并指定外部链接器
-          if [ "${{ matrix.goos }}" = "android" ] && [ "${{ matrix.goarch }}" = "amd64" ]; then
-            CGO_VAL=1
-            LDFLAGS="-s -w -extldflags '-Wl,-rpath=/system/lib64 -Wl,-dynamic-linker,/system/bin/linker64'"
-          fi
-
-          # 执行编译
-          CGO_ENABLED=$CGO_VAL GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} \
-          go build -v -ldflags "$LDFLAGS" -tags "conf_json" -o build_assets/$NAME-${{ matrix.goos }}-${{ matrix.goarch }}$SUFFIX ./main
+          # 统一使用纯静态编译，避免缺少 Android NDK 头文件导致编译失败
+          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} \
+          go build -v -ldflags "-s -w" -tags "conf_json" -o build_assets/$NAME-${{ matrix.goos }}-${{ matrix.goarch }}$SUFFIX ./main
 
       - name: Create or Update Release
         uses: softprops/action-gh-release@v2
