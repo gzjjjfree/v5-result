@@ -34,8 +34,6 @@ jobs:
           # --- Android (手机终端) ---
           - goos: android
             goarch: arm64 # 这是你最需要的，用于 data/local/tmp 运行
-          - goos: android
-            goarch: amd64
 
           # --- macOS ---
           - goos: darwin
