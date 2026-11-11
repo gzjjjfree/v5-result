@@ -60,17 +60,17 @@ jobs:
           SUFFIX=""
           if [ "${{ matrix.goos }}" = "windows" ]; then SUFFIX=".exe"; fi
 
-          # 默认的编译参数
+          # 默认编译参数（其他所有平台包括 android/arm64 均使用此配置）
           LDFLAGS="-s -w"
           CGO_VAL=0
 
-          # 如果目标是 Android，需要启用 CGO 并且指定动态链接器
-          if [ "${{ matrix.goos }}" = "android" ]; then
+          # 只有 android 且架构是 amd64 时，才启用 CGO 并指定外部链接器
+          if [ "${{ matrix.goos }}" = "android" ] && [ "${{ matrix.goarch }}" = "amd64" ]; then
             CGO_VAL=1
             LDFLAGS="-s -w -extldflags '-Wl,-rpath=/system/lib64 -Wl,-dynamic-linker,/system/bin/linker64'"
           fi
 
-          # 执行编译（使用动态的 CGO_VAL）
+          # 执行编译
           CGO_ENABLED=$CGO_VAL GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} \
           go build -v -ldflags "$LDFLAGS" -tags "conf_json" -o build_assets/$NAME-${{ matrix.goos }}-${{ matrix.goarch }}$SUFFIX ./main
 
