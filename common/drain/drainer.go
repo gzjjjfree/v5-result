@@ -3,7 +3,7 @@ package drain
 import (
 	"io"
 
-	"github.com/v2fly/v2ray-core/v5/common/dice"
+	"github.com/gzjjjfree/v5-result/common/dice"
 )
 
 type BehaviorSeedLimitedDrainer struct {

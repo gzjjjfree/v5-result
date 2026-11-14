@@ -5,12 +5,12 @@ import (
 
 	"google.golang.org/protobuf/runtime/protoiface"
 
-	core "github.com/v2fly/v2ray-core/v5"
-	"github.com/v2fly/v2ray-core/v5/app/observatory"
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/dice"
-	"github.com/v2fly/v2ray-core/v5/features"
-	"github.com/v2fly/v2ray-core/v5/features/extension"
+	core "github.com/gzjjjfree/v5-result"
+	"github.com/gzjjjfree/v5-result/app/observatory"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/dice"
+	"github.com/gzjjjfree/v5-result/features"
+	"github.com/gzjjjfree/v5-result/features/extension"
 )
 
 // RandomStrategy represents a random balancing strategy

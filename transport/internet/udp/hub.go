@@ -3,13 +3,13 @@ package udp
 import (
 	"context"
 
-	"github.com/v2fly/v2ray-core/v5/common/environment"
-	"github.com/v2fly/v2ray-core/v5/common/environment/envctx"
+	"github.com/gzjjjfree/v5-result/common/environment"
+	"github.com/gzjjjfree/v5-result/common/environment/envctx"
 
-	"github.com/v2fly/v2ray-core/v5/common/buf"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/common/protocol/udp"
-	"github.com/v2fly/v2ray-core/v5/transport/internet"
+	"github.com/gzjjjfree/v5-result/common/buf"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/common/protocol/udp"
+	"github.com/gzjjjfree/v5-result/transport/internet"
 )
 
 type HubOption func(h *Hub)

@@ -6,12 +6,12 @@ import (
 
 	"github.com/v2fly/struc"
 
-	"github.com/v2fly/v2ray-core/v5/common/buf"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/common/protocol"
+	"github.com/gzjjjfree/v5-result/common/buf"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/common/protocol"
 )
 
-//go:generate go run github.com/v2fly/v2ray-core/v5/common/errors/errorgen
+//go:generate go run github.com/gzjjjfree/v5-result/common/errors/errorgen
 
 type KeyDerivation interface {
 	GetSessionSubKey(effectivePsk, Salt []byte, OutKey []byte) error

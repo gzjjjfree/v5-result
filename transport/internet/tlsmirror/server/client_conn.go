@@ -9,12 +9,12 @@ import (
 
 	"golang.org/x/crypto/chacha20"
 
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/transport/internet"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/tlsmirror"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/tlsmirror/mirrorcommon"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/tlsmirror/mirrorcrypto"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/tlsmirror/mirrorenrollment"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/transport/internet"
+	"github.com/gzjjjfree/v5-result/transport/internet/tlsmirror"
+	"github.com/gzjjjfree/v5-result/transport/internet/tlsmirror/mirrorcommon"
+	"github.com/gzjjjfree/v5-result/transport/internet/tlsmirror/mirrorcrypto"
+	"github.com/gzjjjfree/v5-result/transport/internet/tlsmirror/mirrorenrollment"
 )
 
 type clientConnState struct {

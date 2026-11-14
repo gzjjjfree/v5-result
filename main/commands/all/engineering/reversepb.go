@@ -8,10 +8,10 @@ import (
 
 	"github.com/golang/protobuf/proto"
 
-	core "github.com/v2fly/v2ray-core/v5"
-	"github.com/v2fly/v2ray-core/v5/infra/conf/jsonpb"
-	"github.com/v2fly/v2ray-core/v5/infra/conf/v2jsonpb"
-	"github.com/v2fly/v2ray-core/v5/main/commands/base"
+	core "github.com/gzjjjfree/v5-result"
+	"github.com/gzjjjfree/v5-result/infra/conf/jsonpb"
+	"github.com/gzjjjfree/v5-result/infra/conf/v2jsonpb"
+	"github.com/gzjjjfree/v5-result/main/commands/base"
 )
 
 var cmdReversePb = &base.Command{

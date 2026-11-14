@@ -3,11 +3,11 @@ package nonnative
 import (
 	"io/fs"
 
-	"github.com/v2fly/v2ray-core/v5/app/subscription/entries"
-	"github.com/v2fly/v2ray-core/v5/app/subscription/entries/nonnative/nonnativeifce"
-	"github.com/v2fly/v2ray-core/v5/app/subscription/entries/outbound"
-	"github.com/v2fly/v2ray-core/v5/app/subscription/specs"
-	"github.com/v2fly/v2ray-core/v5/common"
+	"github.com/gzjjjfree/v5-result/app/subscription/entries"
+	"github.com/gzjjjfree/v5-result/app/subscription/entries/nonnative/nonnativeifce"
+	"github.com/gzjjjfree/v5-result/app/subscription/entries/outbound"
+	"github.com/gzjjjfree/v5-result/app/subscription/specs"
+	"github.com/gzjjjfree/v5-result/common"
 )
 
 type nonNativeConverter struct {

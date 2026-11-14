@@ -1,7 +1,7 @@
 package roundtripperreverserserver
 
 import (
-	_ "github.com/v2fly/v2ray-core/v5/common/protoext"
+	_ "github.com/gzjjjfree/v5-result/common/protoext"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	anypb "google.golang.org/protobuf/types/known/anypb"
@@ -87,7 +87,7 @@ const file_transport_internet_request_roundtripperreverserserver_config_proto_ra
 	"\x06listen\x18\x03 \x01(\tR\x06listen\x12+\n" +
 	"\x11access_passphrase\x18\x04 \x01(\tR\x10accessPassphrase:2\x82\xb5\x18.\n" +
 	",transport.request.roundtripperreverserserverB\xe0\x01\n" +
-	"Dcom.v2ray.core.transport.internet.request.roundtripperreverserserverP\x01ZTgithub.com/v2fly/v2ray-core/v5/transport/internet/request/roundtripperreverserserver\xaa\x02?V2Ray.Core.Transport.Internet.Request.RoundtripperReverseServerb\x06proto3"
+	"Dcom.v2ray.core.transport.internet.request.roundtripperreverserserverP\x01ZTgithub.com/gzjjjfree/v5-result/transport/internet/request/roundtripperreverserserver\xaa\x02?V2Ray.Core.Transport.Internet.Request.RoundtripperReverseServerb\x06proto3"
 
 var (
 	file_transport_internet_request_roundtripperreverserserver_config_proto_rawDescOnce sync.Once

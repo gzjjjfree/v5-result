@@ -10,13 +10,13 @@ import (
 
 	"golang.org/x/net/http2"
 
-	core "github.com/v2fly/v2ray-core/v5"
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/buf"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/transport/internet"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/security"
-	"github.com/v2fly/v2ray-core/v5/transport/pipe"
+	core "github.com/gzjjjfree/v5-result"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/buf"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/transport/internet"
+	"github.com/gzjjjfree/v5-result/transport/internet/security"
+	"github.com/gzjjjfree/v5-result/transport/pipe"
 )
 
 var (

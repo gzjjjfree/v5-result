@@ -6,9 +6,9 @@ import (
 
 	"github.com/golang/protobuf/proto"
 
-	"github.com/v2fly/v2ray-core/v5/common/environment/envctx"
-	"github.com/v2fly/v2ray-core/v5/common/environment/envimpl"
-	"github.com/v2fly/v2ray-core/v5/common/registry"
+	"github.com/gzjjjfree/v5-result/common/environment/envctx"
+	"github.com/gzjjjfree/v5-result/common/environment/envimpl"
+	"github.com/gzjjjfree/v5-result/common/registry"
 )
 
 func loadHeterogeneousConfigFromRawJSON(interfaceType, name string, rawJSON json.RawMessage) (proto.Message, error) {

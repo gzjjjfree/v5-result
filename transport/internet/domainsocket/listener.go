@@ -11,10 +11,10 @@ import (
 
 	"golang.org/x/sys/unix"
 
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/transport/internet"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/tls"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/transport/internet"
+	"github.com/gzjjjfree/v5-result/transport/internet/tls"
 )
 
 type Listener struct {

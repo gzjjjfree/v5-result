@@ -6,16 +6,16 @@ import (
 	"flag"
 	"os"
 
-	"github.com/v2fly/v2ray-core/v5/common/environment/envctx"
-	"github.com/v2fly/v2ray-core/v5/common/environment/systemnetworkimpl"
-	"github.com/v2fly/v2ray-core/v5/main/commands/all/engineering"
-	"github.com/v2fly/v2ray-core/v5/main/commands/base"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/request/roundtripperreverserserver"
+	"github.com/gzjjjfree/v5-result/common/environment/envctx"
+	"github.com/gzjjjfree/v5-result/common/environment/systemnetworkimpl"
+	"github.com/gzjjjfree/v5-result/main/commands/all/engineering"
+	"github.com/gzjjjfree/v5-result/main/commands/base"
+	"github.com/gzjjjfree/v5-result/transport/internet/request/roundtripperreverserserver"
 
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-//go:generate go run github.com/v2fly/v2ray-core/v5/common/errors/errorgen
+//go:generate go run github.com/gzjjjfree/v5-result/common/errors/errorgen
 
 var config *string
 

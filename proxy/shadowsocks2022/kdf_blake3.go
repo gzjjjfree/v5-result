@@ -3,7 +3,7 @@ package shadowsocks2022
 import (
 	"lukechampine.com/blake3"
 
-	"github.com/v2fly/v2ray-core/v5/common/buf"
+	"github.com/gzjjjfree/v5-result/common/buf"
 )
 
 func newBLAKE3KeyDerivation() *BLAKE3KeyDerivation {

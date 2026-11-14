@@ -3,9 +3,9 @@ package internet
 import (
 	"context"
 
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/common/session"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/tagged"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/common/session"
+	"github.com/gzjjjfree/v5-result/transport/internet/tagged"
 )
 
 // Dialer is the interface for dialing outbound connections.

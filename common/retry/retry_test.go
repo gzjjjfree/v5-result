@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/errors"
-	. "github.com/v2fly/v2ray-core/v5/common/retry"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/errors"
+	. "github.com/gzjjjfree/v5-result/common/retry"
 )
 
 var errorTestOnly = errors.New("this is a fake error")

@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/testing/servers/tcp"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/testing/servers/tcp"
 
-	_ "github.com/v2fly/v2ray-core/v5/main/distro/all"
+	_ "github.com/gzjjjfree/v5-result/main/distro/all"
 )
 
 func TestHTTPUpgrade(t *testing.T) {

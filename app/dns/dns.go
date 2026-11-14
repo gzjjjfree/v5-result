@@ -4,7 +4,7 @@
 // Package dns is an implementation of core.DNS feature.
 package dns
 
-//go:generate go run github.com/v2fly/v2ray-core/v5/common/errors/errorgen
+//go:generate go run github.com/gzjjjfree/v5-result/common/errors/errorgen
 
 import (
 	"context"
@@ -12,20 +12,20 @@ import (
 	"strings"
 	"sync"
 
-	core "github.com/v2fly/v2ray-core/v5"
-	"github.com/v2fly/v2ray-core/v5/app/dns/fakedns"
-	"github.com/v2fly/v2ray-core/v5/app/router"
-	"github.com/v2fly/v2ray-core/v5/app/router/routercommon"
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/errors"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/common/platform"
-	"github.com/v2fly/v2ray-core/v5/common/session"
-	"github.com/v2fly/v2ray-core/v5/common/strmatcher"
-	"github.com/v2fly/v2ray-core/v5/features"
-	"github.com/v2fly/v2ray-core/v5/features/dns"
-	"github.com/v2fly/v2ray-core/v5/infra/conf/cfgcommon"
-	"github.com/v2fly/v2ray-core/v5/infra/conf/geodata"
+	core "github.com/gzjjjfree/v5-result"
+	"github.com/gzjjjfree/v5-result/app/dns/fakedns"
+	"github.com/gzjjjfree/v5-result/app/router"
+	"github.com/gzjjjfree/v5-result/app/router/routercommon"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/errors"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/common/platform"
+	"github.com/gzjjjfree/v5-result/common/session"
+	"github.com/gzjjjfree/v5-result/common/strmatcher"
+	"github.com/gzjjjfree/v5-result/features"
+	"github.com/gzjjjfree/v5-result/features/dns"
+	"github.com/gzjjjfree/v5-result/infra/conf/cfgcommon"
+	"github.com/gzjjjfree/v5-result/infra/conf/geodata"
 )
 
 // DNS is a DNS rely server.

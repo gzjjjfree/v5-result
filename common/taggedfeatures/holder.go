@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/v2fly/v2ray-core/v5/common/task"
-	"github.com/v2fly/v2ray-core/v5/features"
+	"github.com/gzjjjfree/v5-result/common/task"
+	"github.com/gzjjjfree/v5-result/features"
 )
 
 type Holder struct {

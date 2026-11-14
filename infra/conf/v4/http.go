@@ -5,10 +5,10 @@ import (
 
 	"github.com/golang/protobuf/proto"
 
-	"github.com/v2fly/v2ray-core/v5/common/protocol"
-	"github.com/v2fly/v2ray-core/v5/common/serial"
-	"github.com/v2fly/v2ray-core/v5/infra/conf/cfgcommon"
-	"github.com/v2fly/v2ray-core/v5/proxy/http"
+	"github.com/gzjjjfree/v5-result/common/protocol"
+	"github.com/gzjjjfree/v5-result/common/serial"
+	"github.com/gzjjjfree/v5-result/infra/conf/cfgcommon"
+	"github.com/gzjjjfree/v5-result/proxy/http"
 )
 
 type HTTPAccount struct {

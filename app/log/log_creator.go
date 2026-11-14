@@ -1,8 +1,8 @@
 package log
 
 import (
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/log"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/log"
 )
 
 type HandlerCreatorOptions struct {

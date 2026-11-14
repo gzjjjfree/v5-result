@@ -17,8 +17,8 @@ import (
 
 	"github.com/miekg/dns"
 
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/transport/internet"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/transport/internet"
 )
 
 var (

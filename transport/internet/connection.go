@@ -3,8 +3,8 @@ package internet
 import (
 	"net"
 
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/features/stats"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/features/stats"
 )
 
 type Connection interface {

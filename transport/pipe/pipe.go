@@ -3,9 +3,9 @@ package pipe
 import (
 	"context"
 
-	"github.com/v2fly/v2ray-core/v5/common/signal"
-	"github.com/v2fly/v2ray-core/v5/common/signal/done"
-	"github.com/v2fly/v2ray-core/v5/features/policy"
+	"github.com/gzjjjfree/v5-result/common/signal"
+	"github.com/gzjjjfree/v5-result/common/signal/done"
+	"github.com/gzjjjfree/v5-result/features/policy"
 )
 
 // Option for creating new Pipes.

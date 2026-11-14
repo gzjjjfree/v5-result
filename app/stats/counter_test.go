@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	. "github.com/v2fly/v2ray-core/v5/app/stats"
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/features/stats"
+	. "github.com/gzjjjfree/v5-result/app/stats"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/features/stats"
 )
 
 func TestStatsCounter(t *testing.T) {

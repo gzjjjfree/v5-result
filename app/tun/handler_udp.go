@@ -8,14 +8,14 @@ import (
 	gvisor_udp "gvisor.dev/gvisor/pkg/tcpip/transport/udp"
 	"gvisor.dev/gvisor/pkg/waiter"
 
-	tun_net "github.com/v2fly/v2ray-core/v5/app/tun/net"
-	"github.com/v2fly/v2ray-core/v5/common/buf"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	udp_proto "github.com/v2fly/v2ray-core/v5/common/protocol/udp"
-	"github.com/v2fly/v2ray-core/v5/common/session"
-	"github.com/v2fly/v2ray-core/v5/features/policy"
-	"github.com/v2fly/v2ray-core/v5/features/routing"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/udp"
+	tun_net "github.com/gzjjjfree/v5-result/app/tun/net"
+	"github.com/gzjjjfree/v5-result/common/buf"
+	"github.com/gzjjjfree/v5-result/common/net"
+	udp_proto "github.com/gzjjjfree/v5-result/common/protocol/udp"
+	"github.com/gzjjjfree/v5-result/common/session"
+	"github.com/gzjjjfree/v5-result/features/policy"
+	"github.com/gzjjjfree/v5-result/features/routing"
+	"github.com/gzjjjfree/v5-result/transport/internet/udp"
 )
 
 type UDPHandler struct {

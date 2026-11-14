@@ -3,10 +3,10 @@ package jsonv4
 import (
 	"fmt"
 
-	handlerService "github.com/v2fly/v2ray-core/v5/app/proxyman/command"
-	"github.com/v2fly/v2ray-core/v5/main/commands/all/api"
-	"github.com/v2fly/v2ray-core/v5/main/commands/base"
-	"github.com/v2fly/v2ray-core/v5/main/commands/helpers"
+	handlerService "github.com/gzjjjfree/v5-result/app/proxyman/command"
+	"github.com/gzjjjfree/v5-result/main/commands/all/api"
+	"github.com/gzjjjfree/v5-result/main/commands/base"
+	"github.com/gzjjjfree/v5-result/main/commands/helpers"
 )
 
 var cmdRemoveOutbounds = &base.Command{

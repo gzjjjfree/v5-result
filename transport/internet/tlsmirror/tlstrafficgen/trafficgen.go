@@ -9,17 +9,17 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/environment"
-	"github.com/v2fly/v2ray-core/v5/common/environment/envctx"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/common/serial"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/security"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/tlsmirror"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/tlsmirror/httponconnection"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/environment"
+	"github.com/gzjjjfree/v5-result/common/environment/envctx"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/common/serial"
+	"github.com/gzjjjfree/v5-result/transport/internet/security"
+	"github.com/gzjjjfree/v5-result/transport/internet/tlsmirror"
+	"github.com/gzjjjfree/v5-result/transport/internet/tlsmirror/httponconnection"
 )
 
-//go:generate go run github.com/v2fly/v2ray-core/v5/common/errors/errorgen
+//go:generate go run github.com/gzjjjfree/v5-result/common/errors/errorgen
 
 type TrafficGenerator struct {
 	config *Config

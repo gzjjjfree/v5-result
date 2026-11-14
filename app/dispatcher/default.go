@@ -1,6 +1,6 @@
 package dispatcher
 
-//go:generate go run github.com/v2fly/v2ray-core/v5/common/errors/errorgen
+//go:generate go run github.com/gzjjjfree/v5-result/common/errors/errorgen
 
 import (
 	"context"
@@ -9,21 +9,21 @@ import (
 	"sync"
 	"time"
 
-	core "github.com/v2fly/v2ray-core/v5"
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/buf"
-	"github.com/v2fly/v2ray-core/v5/common/log"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/common/protocol"
-	"github.com/v2fly/v2ray-core/v5/common/session"
-	"github.com/v2fly/v2ray-core/v5/common/strmatcher"
-	"github.com/v2fly/v2ray-core/v5/features/outbound"
-	"github.com/v2fly/v2ray-core/v5/features/policy"
-	"github.com/v2fly/v2ray-core/v5/features/routing"
-	routing_session "github.com/v2fly/v2ray-core/v5/features/routing/session"
-	"github.com/v2fly/v2ray-core/v5/features/stats"
-	"github.com/v2fly/v2ray-core/v5/transport"
-	"github.com/v2fly/v2ray-core/v5/transport/pipe"
+	core "github.com/gzjjjfree/v5-result"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/buf"
+	"github.com/gzjjjfree/v5-result/common/log"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/common/protocol"
+	"github.com/gzjjjfree/v5-result/common/session"
+	"github.com/gzjjjfree/v5-result/common/strmatcher"
+	"github.com/gzjjjfree/v5-result/features/outbound"
+	"github.com/gzjjjfree/v5-result/features/policy"
+	"github.com/gzjjjfree/v5-result/features/routing"
+	routing_session "github.com/gzjjjfree/v5-result/features/routing/session"
+	"github.com/gzjjjfree/v5-result/features/stats"
+	"github.com/gzjjjfree/v5-result/transport"
+	"github.com/gzjjjfree/v5-result/transport/pipe"
 )
 
 var errSniffingTimeout = newError("timeout on sniffing")

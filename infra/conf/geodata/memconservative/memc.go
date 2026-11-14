@@ -3,11 +3,11 @@ package memconservative
 import (
 	"runtime"
 
-	"github.com/v2fly/v2ray-core/v5/app/router/routercommon"
-	"github.com/v2fly/v2ray-core/v5/infra/conf/geodata"
+	"github.com/gzjjjfree/v5-result/app/router/routercommon"
+	"github.com/gzjjjfree/v5-result/infra/conf/geodata"
 )
 
-//go:generate go run github.com/v2fly/v2ray-core/v5/common/errors/errorgen
+//go:generate go run github.com/gzjjjfree/v5-result/common/errors/errorgen
 
 type memConservativeLoader struct {
 	geoipcache   GeoIPCache

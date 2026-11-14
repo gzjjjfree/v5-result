@@ -8,7 +8,7 @@ import (
 
 	"golang.org/x/sys/unix"
 
-	"github.com/v2fly/v2ray-core/v5/common/net"
+	"github.com/gzjjjfree/v5-result/common/net"
 )
 
 func RetrieveOriginalDest(oob []byte) net.Destination {

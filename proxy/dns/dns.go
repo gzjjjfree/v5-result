@@ -8,19 +8,19 @@ import (
 
 	"golang.org/x/net/dns/dnsmessage"
 
-	core "github.com/v2fly/v2ray-core/v5"
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/buf"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	dns_proto "github.com/v2fly/v2ray-core/v5/common/protocol/dns"
-	"github.com/v2fly/v2ray-core/v5/common/session"
-	"github.com/v2fly/v2ray-core/v5/common/signal"
-	"github.com/v2fly/v2ray-core/v5/common/strmatcher"
-	"github.com/v2fly/v2ray-core/v5/common/task"
-	"github.com/v2fly/v2ray-core/v5/features/dns"
-	"github.com/v2fly/v2ray-core/v5/features/policy"
-	"github.com/v2fly/v2ray-core/v5/transport"
-	"github.com/v2fly/v2ray-core/v5/transport/internet"
+	core "github.com/gzjjjfree/v5-result"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/buf"
+	"github.com/gzjjjfree/v5-result/common/net"
+	dns_proto "github.com/gzjjjfree/v5-result/common/protocol/dns"
+	"github.com/gzjjjfree/v5-result/common/session"
+	"github.com/gzjjjfree/v5-result/common/signal"
+	"github.com/gzjjjfree/v5-result/common/strmatcher"
+	"github.com/gzjjjfree/v5-result/common/task"
+	"github.com/gzjjjfree/v5-result/features/dns"
+	"github.com/gzjjjfree/v5-result/features/policy"
+	"github.com/gzjjjfree/v5-result/transport"
+	"github.com/gzjjjfree/v5-result/transport/internet"
 )
 
 func init() {

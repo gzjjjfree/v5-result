@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/v2fly/v2ray-core/v5/transport/internet/tlsmirror"
+	"github.com/gzjjjfree/v5-result/transport/internet/tlsmirror"
 )
 
 func NewServerEnrollmentProcessor(primaryKey []byte) (tlsmirror.ConnectionEnrollmentConfirmationProcessor, error) {

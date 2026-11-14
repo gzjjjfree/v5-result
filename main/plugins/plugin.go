@@ -1,6 +1,6 @@
 package plugins
 
-import "github.com/v2fly/v2ray-core/v5/main/commands/base"
+import "github.com/gzjjjfree/v5-result/main/commands/base"
 
 var Plugins []Plugin
 

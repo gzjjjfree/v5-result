@@ -3,7 +3,7 @@ package serial_test
 import (
 	"testing"
 
-	. "github.com/v2fly/v2ray-core/v5/common/serial"
+	. "github.com/gzjjjfree/v5-result/common/serial"
 )
 
 func TestGetInstance(t *testing.T) {

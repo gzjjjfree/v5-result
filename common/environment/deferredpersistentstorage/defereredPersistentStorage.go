@@ -3,9 +3,9 @@ package deferredpersistentstorage
 import (
 	"context"
 
-	"github.com/v2fly/v2ray-core/v5/app/persistentstorage"
-	"github.com/v2fly/v2ray-core/v5/common/errors"
-	"github.com/v2fly/v2ray-core/v5/features/extension/storage"
+	"github.com/gzjjjfree/v5-result/app/persistentstorage"
+	"github.com/gzjjjfree/v5-result/common/errors"
+	"github.com/gzjjjfree/v5-result/features/extension/storage"
 )
 
 type DeferredPersistentStorage interface {

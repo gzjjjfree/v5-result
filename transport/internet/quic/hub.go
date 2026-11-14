@@ -6,12 +6,12 @@ import (
 
 	"github.com/quic-go/quic-go"
 
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/common/protocol/tls/cert"
-	"github.com/v2fly/v2ray-core/v5/common/signal/done"
-	"github.com/v2fly/v2ray-core/v5/transport/internet"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/tls"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/common/protocol/tls/cert"
+	"github.com/gzjjjfree/v5-result/common/signal/done"
+	"github.com/gzjjjfree/v5-result/transport/internet"
+	"github.com/gzjjjfree/v5-result/transport/internet/tls"
 )
 
 // Listener is an internet.Listener that listens for TCP connections.

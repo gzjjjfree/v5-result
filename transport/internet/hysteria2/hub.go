@@ -7,10 +7,10 @@ import (
 	"github.com/apernet/quic-go/http3"
 	hyServer "github.com/v2fly/hysteria/core/v2/server"
 
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/transport/internet"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/tls"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/transport/internet"
+	"github.com/gzjjjfree/v5-result/transport/internet/tls"
 )
 
 // Listener is an internet.Listener that listens for TCP connections.

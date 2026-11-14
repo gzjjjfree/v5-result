@@ -1,8 +1,8 @@
 package subscription
 
-import "github.com/v2fly/v2ray-core/v5/features"
+import "github.com/gzjjjfree/v5-result/features"
 
-//go:generate go run github.com/v2fly/v2ray-core/v5/common/errors/errorgen
+//go:generate go run github.com/gzjjjfree/v5-result/common/errors/errorgen
 
 type SubscriptionManager interface {
 	features.Feature

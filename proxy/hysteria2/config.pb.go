@@ -1,9 +1,9 @@
 package hysteria2
 
 import (
-	packetaddr "github.com/v2fly/v2ray-core/v5/common/net/packetaddr"
-	protocol "github.com/v2fly/v2ray-core/v5/common/protocol"
-	_ "github.com/v2fly/v2ray-core/v5/common/protoext"
+	packetaddr "github.com/gzjjjfree/v5-result/common/net/packetaddr"
+	protocol "github.com/gzjjjfree/v5-result/common/protocol"
+	_ "github.com/gzjjjfree/v5-result/common/protoext"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -154,7 +154,7 @@ const file_proxy_hysteria2_config_proto_rawDesc = "" +
 	"\fServerConfig\x12R\n" +
 	"\x0fpacket_encoding\x18\x01 \x01(\x0e2).v2ray.core.net.packetaddr.PacketAddrTypeR\x0epacketEncoding:\x18\x82\xb5\x18\x14\n" +
 	"\ainbound\x12\thysteria2Bo\n" +
-	"\x1ecom.v2ray.core.proxy.hysteria2P\x01Z.github.com/v2fly/v2ray-core/v5/proxy/hysteria2\xaa\x02\x1aV2Ray.Core.Proxy.Hysteria2b\x06proto3"
+	"\x1ecom.v2ray.core.proxy.hysteria2P\x01Z.github.com/gzjjjfree/v5-result/proxy/hysteria2\xaa\x02\x1aV2Ray.Core.Proxy.Hysteria2b\x06proto3"
 
 var (
 	file_proxy_hysteria2_config_proto_rawDescOnce sync.Once

@@ -8,11 +8,11 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/platform/filesystem"
-	"github.com/v2fly/v2ray-core/v5/infra/conf/geodata"
-	_ "github.com/v2fly/v2ray-core/v5/infra/conf/geodata/memconservative"
-	_ "github.com/v2fly/v2ray-core/v5/infra/conf/geodata/standard"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/platform/filesystem"
+	"github.com/gzjjjfree/v5-result/infra/conf/geodata"
+	_ "github.com/gzjjjfree/v5-result/infra/conf/geodata/memconservative"
+	_ "github.com/gzjjjfree/v5-result/infra/conf/geodata/standard"
 )
 
 func init() {

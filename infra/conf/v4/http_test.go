@@ -3,10 +3,10 @@ package v4_test
 import (
 	"testing"
 
-	"github.com/v2fly/v2ray-core/v5/infra/conf/cfgcommon"
-	"github.com/v2fly/v2ray-core/v5/infra/conf/cfgcommon/testassist"
-	v4 "github.com/v2fly/v2ray-core/v5/infra/conf/v4"
-	"github.com/v2fly/v2ray-core/v5/proxy/http"
+	"github.com/gzjjjfree/v5-result/infra/conf/cfgcommon"
+	"github.com/gzjjjfree/v5-result/infra/conf/cfgcommon/testassist"
+	v4 "github.com/gzjjjfree/v5-result/infra/conf/v4"
+	"github.com/gzjjjfree/v5-result/proxy/http"
 )
 
 func TestHTTPServerConfig(t *testing.T) {

@@ -6,8 +6,8 @@ import (
 	"encoding/base64"
 	"io"
 
-	"github.com/v2fly/v2ray-core/v5/app/subscription/containers"
-	"github.com/v2fly/v2ray-core/v5/common"
+	"github.com/gzjjjfree/v5-result/app/subscription/containers"
+	"github.com/gzjjjfree/v5-result/common"
 )
 
 func newBase64URLLineParser() containers.SubscriptionContainerDocumentParser {

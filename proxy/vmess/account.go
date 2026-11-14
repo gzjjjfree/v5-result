@@ -6,9 +6,9 @@ package vmess
 import (
 	"strings"
 
-	"github.com/v2fly/v2ray-core/v5/common/dice"
-	"github.com/v2fly/v2ray-core/v5/common/protocol"
-	"github.com/v2fly/v2ray-core/v5/common/uuid"
+	"github.com/gzjjjfree/v5-result/common/dice"
+	"github.com/gzjjjfree/v5-result/common/protocol"
+	"github.com/gzjjjfree/v5-result/common/uuid"
 )
 
 // MemoryAccount is an in-memory form of VMess account.

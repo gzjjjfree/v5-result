@@ -9,12 +9,12 @@
 // connections.
 package core
 
-//go:generate go run github.com/v2fly/v2ray-core/v5/common/errors/errorgen
+//go:generate go run github.com/gzjjjfree/v5-result/common/errors/errorgen
 
 import (
 	"runtime"
 
-	"github.com/v2fly/v2ray-core/v5/common/serial"
+	"github.com/gzjjjfree/v5-result/common/serial"
 )
 
 var (

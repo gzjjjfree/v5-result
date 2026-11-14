@@ -6,15 +6,15 @@ import (
 	"strings"
 	"time"
 
-	core "github.com/v2fly/v2ray-core/v5"
-	"github.com/v2fly/v2ray-core/v5/app/dns/fakedns"
-	"github.com/v2fly/v2ray-core/v5/app/router"
-	"github.com/v2fly/v2ray-core/v5/common/errors"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/common/session"
-	"github.com/v2fly/v2ray-core/v5/features"
-	"github.com/v2fly/v2ray-core/v5/features/dns"
-	"github.com/v2fly/v2ray-core/v5/features/routing"
+	core "github.com/gzjjjfree/v5-result"
+	"github.com/gzjjjfree/v5-result/app/dns/fakedns"
+	"github.com/gzjjjfree/v5-result/app/router"
+	"github.com/gzjjjfree/v5-result/common/errors"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/common/session"
+	"github.com/gzjjjfree/v5-result/features"
+	"github.com/gzjjjfree/v5-result/features/dns"
+	"github.com/gzjjjfree/v5-result/features/routing"
 )
 
 // Server is the interface for Name Server.

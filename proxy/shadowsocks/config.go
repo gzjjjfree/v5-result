@@ -12,11 +12,11 @@ import (
 	"golang.org/x/crypto/chacha20poly1305"
 	"golang.org/x/crypto/hkdf"
 
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/antireplay"
-	"github.com/v2fly/v2ray-core/v5/common/buf"
-	"github.com/v2fly/v2ray-core/v5/common/crypto"
-	"github.com/v2fly/v2ray-core/v5/common/protocol"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/antireplay"
+	"github.com/gzjjjfree/v5-result/common/buf"
+	"github.com/gzjjjfree/v5-result/common/crypto"
+	"github.com/gzjjjfree/v5-result/common/protocol"
 )
 
 // MemoryAccount is an account type converted from Account.

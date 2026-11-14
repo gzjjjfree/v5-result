@@ -1,11 +1,11 @@
 package dns
 
 import (
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/common/strmatcher"
-	"github.com/v2fly/v2ray-core/v5/features"
-	"github.com/v2fly/v2ray-core/v5/features/dns"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/common/strmatcher"
+	"github.com/gzjjjfree/v5-result/features"
+	"github.com/gzjjjfree/v5-result/features/dns"
 )
 
 // StaticHosts represents static domain-ip mapping in DNS server.

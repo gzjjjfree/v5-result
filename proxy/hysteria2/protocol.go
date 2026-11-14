@@ -7,9 +7,9 @@ import (
 	"github.com/apernet/quic-go/quicvarint"
 	hyProtocol "github.com/v2fly/hysteria/core/v2/international/protocol"
 
-	"github.com/v2fly/v2ray-core/v5/common/buf"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	hyTransport "github.com/v2fly/v2ray-core/v5/transport/internet/hysteria2"
+	"github.com/gzjjjfree/v5-result/common/buf"
+	"github.com/gzjjjfree/v5-result/common/net"
+	hyTransport "github.com/gzjjjfree/v5-result/transport/internet/hysteria2"
 )
 
 const (

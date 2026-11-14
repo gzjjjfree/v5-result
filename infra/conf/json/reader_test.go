@@ -7,8 +7,8 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/v2fly/v2ray-core/v5/common"
-	. "github.com/v2fly/v2ray-core/v5/infra/conf/json"
+	"github.com/gzjjjfree/v5-result/common"
+	. "github.com/gzjjjfree/v5-result/infra/conf/json"
 )
 
 func TestReader(t *testing.T) {

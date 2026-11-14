@@ -5,12 +5,12 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	"github.com/v2fly/v2ray-core/v5/app/router/routercommon"
-	"github.com/v2fly/v2ray-core/v5/common/platform/filesystem"
-	"github.com/v2fly/v2ray-core/v5/infra/conf/geodata"
+	"github.com/gzjjjfree/v5-result/app/router/routercommon"
+	"github.com/gzjjjfree/v5-result/common/platform/filesystem"
+	"github.com/gzjjjfree/v5-result/infra/conf/geodata"
 )
 
-//go:generate go run github.com/v2fly/v2ray-core/v5/common/errors/errorgen
+//go:generate go run github.com/gzjjjfree/v5-result/common/errors/errorgen
 
 func loadIP(filename, country string) ([]*routercommon.CIDR, error) {
 	geoipBytes, err := filesystem.ReadAsset(filename)

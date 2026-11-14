@@ -14,15 +14,15 @@ import (
 
 	"github.com/gorilla/websocket"
 
-	core "github.com/v2fly/v2ray-core/v5"
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/common/session"
-	"github.com/v2fly/v2ray-core/v5/features/extension"
-	"github.com/v2fly/v2ray-core/v5/transport/internet"
+	core "github.com/gzjjjfree/v5-result"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/common/session"
+	"github.com/gzjjjfree/v5-result/features/extension"
+	"github.com/gzjjjfree/v5-result/transport/internet"
 
-	"github.com/v2fly/v2ray-core/v5/transport/internet/security"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/tls"
+	"github.com/gzjjjfree/v5-result/transport/internet/security"
+	"github.com/gzjjjfree/v5-result/transport/internet/tls"
 )
 
 var (

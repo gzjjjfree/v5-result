@@ -1,7 +1,7 @@
 package hysteria2
 
 import (
-	_ "github.com/v2fly/v2ray-core/v5/common/protoext"
+	_ "github.com/gzjjjfree/v5-result/common/protoext"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -162,7 +162,7 @@ const file_transport_internet_hysteria2_config_proto_rawDesc = "" +
 	"\x17ignore_client_bandwidth\x18\x05 \x01(\bR\x15ignoreClientBandwidth\x12*\n" +
 	"\x11use_udp_extension\x18\x06 \x01(\bR\x0fuseUdpExtension:\x1a\x82\xb5\x18\x16\n" +
 	"\ttransport\x12\thysteria2B\x96\x01\n" +
-	"+com.v2ray.core.transport.internet.hysteria2P\x01Z;github.com/v2fly/v2ray-core/v5/transport/internet/hysteria2\xaa\x02'V2Ray.Core.Transport.Internet.Hysteria2b\x06proto3"
+	"+com.v2ray.core.transport.internet.hysteria2P\x01Z;github.com/gzjjjfree/v5-result/transport/internet/hysteria2\xaa\x02'V2Ray.Core.Transport.Internet.Hysteria2b\x06proto3"
 
 var (
 	file_transport_internet_hysteria2_config_proto_rawDescOnce sync.Once

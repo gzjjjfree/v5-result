@@ -7,9 +7,9 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/v2fly/v2ray-core/v5/main/commands/all/engineering"
-	"github.com/v2fly/v2ray-core/v5/main/commands/base"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/request/roundtripperreverserserver"
+	"github.com/gzjjjfree/v5-result/main/commands/all/engineering"
+	"github.com/gzjjjfree/v5-result/main/commands/base"
+	"github.com/gzjjjfree/v5-result/transport/internet/request/roundtripperreverserserver"
 )
 
 var (

@@ -1,7 +1,7 @@
 package protocol
 
 import (
-	net "github.com/v2fly/v2ray-core/v5/common/net"
+	net "github.com/gzjjjfree/v5-result/common/net"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -85,7 +85,7 @@ const file_common_protocol_server_spec_proto_rawDesc = "" +
 	"\aaddress\x18\x01 \x01(\v2!.v2ray.core.common.net.IPOrDomainR\aaddress\x12\x12\n" +
 	"\x04port\x18\x02 \x01(\rR\x04port\x124\n" +
 	"\x04user\x18\x03 \x03(\v2 .v2ray.core.common.protocol.UserR\x04userBo\n" +
-	"\x1ecom.v2ray.core.common.protocolP\x01Z.github.com/v2fly/v2ray-core/v5/common/protocol\xaa\x02\x1aV2Ray.Core.Common.Protocolb\x06proto3"
+	"\x1ecom.v2ray.core.common.protocolP\x01Z.github.com/gzjjjfree/v5-result/common/protocol\xaa\x02\x1aV2Ray.Core.Common.Protocolb\x06proto3"
 
 var (
 	file_common_protocol_server_spec_proto_rawDescOnce sync.Once

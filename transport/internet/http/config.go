@@ -1,9 +1,9 @@
 package http
 
 import (
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/dice"
-	"github.com/v2fly/v2ray-core/v5/transport/internet"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/dice"
+	"github.com/gzjjjfree/v5-result/transport/internet"
 )
 
 const protocolName = "http"

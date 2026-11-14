@@ -1,5 +1,5 @@
 package persistentstorage
 
-import "github.com/v2fly/v2ray-core/v5/features/extension/storage"
+import "github.com/gzjjjfree/v5-result/features/extension/storage"
 
 type ScopedPersistentStorage = storage.ScopedPersistentStorage

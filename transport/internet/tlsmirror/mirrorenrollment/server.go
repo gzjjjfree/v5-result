@@ -4,10 +4,10 @@ import (
 	"context"
 	"net"
 
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/serial"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/tlsmirror"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/tlsmirror/mirrorenrollment/httpenrollmentconfirmation"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/serial"
+	"github.com/gzjjjfree/v5-result/transport/internet/tlsmirror"
+	"github.com/gzjjjfree/v5-result/transport/internet/tlsmirror/mirrorenrollment/httpenrollmentconfirmation"
 )
 
 func NewEnrollmentConfirmationServer(ctx context.Context, config *Config, enrollmentProcessor tlsmirror.ConnectionEnrollmentConfirmationProcessor) (*EnrollmentConfirmationServer, error) {

@@ -6,12 +6,12 @@ import (
 
 	"github.com/vincent-petithory/dataurl"
 
-	"github.com/v2fly/v2ray-core/v5/app/subscription"
-	"github.com/v2fly/v2ray-core/v5/app/subscription/documentfetcher"
-	"github.com/v2fly/v2ray-core/v5/common"
+	"github.com/gzjjjfree/v5-result/app/subscription"
+	"github.com/gzjjjfree/v5-result/app/subscription/documentfetcher"
+	"github.com/gzjjjfree/v5-result/common"
 )
 
-//go:generate go run github.com/v2fly/v2ray-core/v5/common/errors/errorgen
+//go:generate go run github.com/gzjjjfree/v5-result/common/errors/errorgen
 
 func newDataURLFetcher() *dataURLFetcher {
 	return &dataURLFetcher{}

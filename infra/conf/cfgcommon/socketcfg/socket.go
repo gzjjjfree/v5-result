@@ -3,7 +3,7 @@ package socketcfg
 import (
 	"strings"
 
-	"github.com/v2fly/v2ray-core/v5/transport/internet"
+	"github.com/gzjjjfree/v5-result/transport/internet"
 )
 
 type SocketConfig struct {

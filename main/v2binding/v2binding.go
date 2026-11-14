@@ -3,18 +3,18 @@ package v2binding
 import (
 	"google.golang.org/protobuf/types/known/anypb"
 
-	core "github.com/v2fly/v2ray-core/v5"
-	"github.com/v2fly/v2ray-core/v5/app/commander"
-	"github.com/v2fly/v2ray-core/v5/app/dispatcher"
-	"github.com/v2fly/v2ray-core/v5/app/instman"
-	"github.com/v2fly/v2ray-core/v5/app/instman/command"
-	"github.com/v2fly/v2ray-core/v5/app/proxyman"
-	"github.com/v2fly/v2ray-core/v5/app/router"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/common/serial"
-	_ "github.com/v2fly/v2ray-core/v5/main/distro/all"
-	"github.com/v2fly/v2ray-core/v5/proxy/blackhole"
-	"github.com/v2fly/v2ray-core/v5/proxy/dokodemo"
+	core "github.com/gzjjjfree/v5-result"
+	"github.com/gzjjjfree/v5-result/app/commander"
+	"github.com/gzjjjfree/v5-result/app/dispatcher"
+	"github.com/gzjjjfree/v5-result/app/instman"
+	"github.com/gzjjjfree/v5-result/app/instman/command"
+	"github.com/gzjjjfree/v5-result/app/proxyman"
+	"github.com/gzjjjfree/v5-result/app/router"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/common/serial"
+	_ "github.com/gzjjjfree/v5-result/main/distro/all"
+	"github.com/gzjjjfree/v5-result/proxy/blackhole"
+	"github.com/gzjjjfree/v5-result/proxy/dokodemo"
 )
 
 type bindingInstance struct {

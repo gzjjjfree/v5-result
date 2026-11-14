@@ -11,15 +11,15 @@ import (
 	"github.com/quic-go/quic-go"
 	"golang.org/x/net/dns/dnsmessage"
 
-	"github.com/v2fly/v2ray-core/v5/common"
-	"github.com/v2fly/v2ray-core/v5/common/buf"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/common/protocol/dns"
-	"github.com/v2fly/v2ray-core/v5/common/session"
-	"github.com/v2fly/v2ray-core/v5/common/signal/pubsub"
-	"github.com/v2fly/v2ray-core/v5/common/task"
-	dns_feature "github.com/v2fly/v2ray-core/v5/features/dns"
-	"github.com/v2fly/v2ray-core/v5/transport/internet/tls"
+	"github.com/gzjjjfree/v5-result/common"
+	"github.com/gzjjjfree/v5-result/common/buf"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/common/protocol/dns"
+	"github.com/gzjjjfree/v5-result/common/session"
+	"github.com/gzjjjfree/v5-result/common/signal/pubsub"
+	"github.com/gzjjjfree/v5-result/common/task"
+	dns_feature "github.com/gzjjjfree/v5-result/features/dns"
+	"github.com/gzjjjfree/v5-result/transport/internet/tls"
 )
 
 // NextProtoDQ - During connection establishment, DNS/QUIC support is indicated

@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/protobuf/reflect/protoreflect"
 
-	"github.com/v2fly/v2ray-core/v5/common/protoext"
+	"github.com/gzjjjfree/v5-result/common/protoext"
 )
 
 func TestMessageOpt(t *testing.T) {

@@ -1,9 +1,9 @@
 package udp
 
 import (
-	"github.com/v2fly/v2ray-core/v5/common/buf"
-	"github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/transport/internet"
+	"github.com/gzjjjfree/v5-result/common/buf"
+	"github.com/gzjjjfree/v5-result/common/net"
+	"github.com/gzjjjfree/v5-result/transport/internet"
 )
 
 func NewMonoDestUDPConn(conn internet.AbstractPacketConn, addr net.Addr) *MonoDestUDPConn {

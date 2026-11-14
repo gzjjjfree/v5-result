@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/v2fly/v2ray-core/v5/common/cmdarg"
-	"github.com/v2fly/v2ray-core/v5/common/errors"
-	"github.com/v2fly/v2ray-core/v5/infra/conf/merge"
+	"github.com/gzjjjfree/v5-result/common/cmdarg"
+	"github.com/gzjjjfree/v5-result/common/errors"
+	"github.com/gzjjjfree/v5-result/infra/conf/merge"
 )
 
 type jsonConverter func(v []byte) ([]byte, error)

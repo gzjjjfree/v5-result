@@ -1,7 +1,7 @@
 package mirrorbase
 
 import (
-	"github.com/v2fly/v2ray-core/v5/common/crypto"
+	"github.com/gzjjjfree/v5-result/common/crypto"
 )
 
 func reverseBytesGeneratorByteOrder(generator crypto.BytesGenerator) crypto.BytesGenerator {
